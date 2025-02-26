@@ -88,23 +88,6 @@ async function seed() {
 
     console.log("Cleared all existing data.");
 
-    // Seed Agents
-    const agents = [];
-    for (let i = 1; i <= 5; i++) {
-      const agent = await databases.createDocument(
-        config.databaseId!,
-        COLLECTIONS.AGENT!,
-        ID.unique(),
-        {
-          name: `Agent ${i}`,
-          email: `agent${i}@example.com`,
-          avatar: agentImages[Math.floor(Math.random() * agentImages.length)],
-        }
-      );
-      agents.push(agent);
-    }
-    console.log(`Seeded ${agents.length} agents.`);
-
     // Seed Reviews
     const reviews = [];
     for (let i = 1; i <= 20; i++) {
@@ -137,46 +120,67 @@ async function seed() {
 
     console.log(`Seeded ${galleries.length} galleries.`);
 
-    // Seed Properties
-    for (let i = 1; i <= 20; i++) {
-      const assignedAgent = agents[Math.floor(Math.random() * agents.length)];
-
-      const assignedReviews = getRandomSubset(reviews, 5, 7); // 5 to 7 reviews
-      const assignedGalleries = getRandomSubset(galleries, 3, 8); // 3 to 8 galleries
-
-      const selectedAmenities = amenities
-        .sort(() => 0.5 - Math.random())
-        .slice(0, Math.floor(Math.random() * amenities.length) + 1);
-
-      const image =
-        turfsImages.length - 1 >= i
-          ? turfsImages[i]
-          : turfsImages[
-              Math.floor(Math.random() * turfsImages.length)
-            ];
-
-      const turf = await databases.createDocument(
+    // Seed Agents and their Turfs
+    for (let i = 1; i <= 5; i++) {
+      // Create agent first
+      const agent = await databases.createDocument(
         config.databaseId!,
-        COLLECTIONS.TURF!,
+        COLLECTIONS.AGENT!,
         ID.unique(),
         {
-          name: `Turf ${i}`,
-          sports: turfSports[Math.floor(Math.random() * turfSports.length)],
-          description: `This is the description for Property ${i}.`,
-          address: `123 Property Street, City ${i}`,
-          geolocation: `192.168.1.${i}, 192.168.1.${i}`,
-          price: Math.floor(Math.random() * 9000) + 1000,
-          area: Math.floor(Math.random() * 3000) + 500,
-          rating: Math.floor(Math.random() * 5) + 1,
-          amenities: selectedAmenities,
-          image: image,
-          agent: assignedAgent.$id,
-          reviews: assignedReviews.map((review) => review.$id),
-          gallery: assignedGalleries.map((gallery) => gallery.$id),
+          name: `Agent ${i}`,
+          email: `agent${i}@example.com`,
+          avatar: agentImages[Math.floor(Math.random() * agentImages.length)],
         }
       );
 
-      console.log(`Seeded property: ${turf.name}`);
+      // Create 4 turfs for each agent
+      for (let j = 1; j <= 4; j++) {
+        const assignedReviews = getRandomSubset(reviews, 5, 7); // 5 to 7 reviews
+        const assignedGalleries = getRandomSubset(galleries, 3, 8); // 3 to 8 galleries
+
+        const selectedAmenities = amenities
+          .sort(() => 0.5 - Math.random())
+          .slice(0, Math.floor(Math.random() * amenities.length) + 1);
+
+        const turfIndex = ((i-1) * 4) + j - 1;
+        const image = turfsImages[turfIndex % turfsImages.length];
+
+        const turf = await databases.createDocument(
+          config.databaseId!,
+          COLLECTIONS.TURF!,
+          ID.unique(),
+          {
+            name: `Turf ${(i-1)*4 + j}`,
+            sports: turfSports[Math.floor(Math.random() * turfSports.length)],
+            description: `This is the description for Property ${(i-1)*4 + j}.`,
+            address: `123 Property Street, City ${(i-1)*4 + j}`,
+            geolocation: `192.168.1.${(i-1)*4 + j}, 192.168.1.${(i-1)*4 + j}`,
+            price: Math.floor(Math.random() * 9000) + 1000,
+            area: Math.floor(Math.random() * 3000) + 500,
+            rating: Math.floor(Math.random() * 5) + 1,
+            amenities: selectedAmenities,
+            image: image,
+            agent: agent.$id,
+            reviews: assignedReviews.map((review) => review.$id),
+            gallery: assignedGalleries.map((gallery) => gallery.$id),
+          }
+        );
+
+        // Update agent with the turf reference
+        await databases.updateDocument(
+          config.databaseId!,
+          COLLECTIONS.AGENT!,
+          agent.$id,
+          {
+            turfs: [...(agent.turfs || []), turf.$id]
+          }
+        );
+
+        console.log(`Seeded turf: ${turf.name} for agent: ${agent.name}`);
+      }
+      
+      console.log(`Seeded agent: ${agent.name} with 4 turfs`);
     }
 
     console.log("Data seeding completed.");

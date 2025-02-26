@@ -26,8 +26,9 @@ const Search = () => {
         <TextInput
           value={search}
           onChangeText={handleSearch}
-          placeholder="Search for anything"
-          className="text-sm font-rubik text-black-300 ml-2 flex-1"
+          placeholder="Search for Turf Venues"
+          placeholderTextColor="#4B5563"
+          className="text-base font-rubik text-black ml-2 flex-1"
         />
       </View>
 

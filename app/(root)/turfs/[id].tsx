@@ -56,7 +56,7 @@ const TurfDetails = () => {
             <View className="flex flex-row items-center w-full justify-between">
               <TouchableOpacity
                 onPress={() => router.back()}
-                className="flex flex-row bg-primary-200 rounded-full size-11 items-center justify-center"
+                className="flex flex-row bg-white rounded-full size-11 items-center justify-center"
               >
                 <Image source={icons.backArrow} className="size-5" />
               </TouchableOpacity>
@@ -65,7 +65,7 @@ const TurfDetails = () => {
                 <Image
                   source={icons.heart}
                   className="size-7"
-                  tintColor={"#191D31"}
+                  tintColor={"black"}
                 />
                 <Image source={icons.send} className="size-7" />
               </View>
@@ -80,7 +80,7 @@ const TurfDetails = () => {
 
           <View className="flex flex-row items-center gap-3">
             <View className="flex flex-row items-center px-4 py-2 bg-primary-100 rounded-full">
-              <Text className="text-xs font-rubik-bold text-primary-300">
+              <Text className="text-xs font-rubik-bold text-primary-800">
                 {turf?.sports}
               </Text>
             </View>
@@ -116,16 +116,17 @@ const TurfDetails = () => {
             <View className="flex flex-row items-center justify-between mt-4">
               <View className="flex flex-row items-center">
                 <Image
-                  source={{ uri: turf?.agent.avatar }}
+                  source={{ uri: turf?.agent?.avatar }}
                   className="size-14 rounded-full"
+                  alt="agent avatar"
                 />
 
                 <View className="flex flex-col items-start justify-center ml-3">
                   <Text className="text-lg text-black-300 text-start font-rubik-bold">
-                    {turf?.agent.name}
+                    {turf?.agent?.name}
                   </Text>
                   <Text className="text-sm text-black-200 text-start font-rubik-medium">
-                    {turf?.agent.email}
+                    {turf?.agent?.email}
                   </Text>
                 </View>
               </View>
