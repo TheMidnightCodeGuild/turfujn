@@ -1,69 +1,49 @@
 import icons from "./icon";
 import images from "./images";
 
-export const cards = [
+export const amenities = [
   {
-    title: "Card 1",
-    location: "Location 1",
-    price: "$100",
-    rating: 4.8,
-    category: "house",
-    image: images.newYork,
+    title: "Changing Room",
+    icon: icons.laundry,
   },
   {
-    title: "Card 2",
-    location: "Location 2",
-    price: "$200",
-    rating: 3,
-    category: "house",
-    image: images.japan,
+    title: "Parking",
+    icon: icons.carPark,
   },
   {
-    title: "Card 3",
-    location: "Location 3",
-    price: "$300",
-    rating: 2,
-    category: "flat",
-    image: images.newYork,
+    title: "Training Equipment",
+    icon: icons.run,
   },
   {
-    title: "Card 4",
-    location: "Location 4",
-    price: "$400",
-    rating: 5,
-    category: "villa",
-    image: images.japan,
-  },
-];
-
-export const featuredCards = [
-  {
-    title: "Featured 1",
-    location: "Location 1",
-    price: "$100",
-    rating: 4.8,
-    image: images.newYork,
-    category: "house",
+    title: "Cafeteria",
+    icon: icons.cutlery,
   },
   {
-    title: "Featured 2",
-    location: "Location 2",
-    price: "$200",
-    rating: 3,
-    image: images.japan,
-    category: "flat",
+    title: "Gym",
+    icon: icons.dumbell,
+  },
+  {
+    title: "Water Cooler",
+    icon: icons.swim,
+  },
+  {
+    title: "Wifi",
+    icon: icons.wifi,
+  },
+  {
+    title: "First Aid",
+    icon: icons.info,
   },
 ];
 
 export const categories = [
   { title: "All", category: "All" },
-  { title: "Houses", category: "House" },
-  { title: "Condos", category: "Condos" },
-  { title: "Duplexes", category: "Duplexes" },
-  { title: "Studios", category: "Studios" },
-  { title: "Villas", category: "Villa" },
-  { title: "Apartments", category: "Apartments" },
-  { title: "Townhomes", category: "Townhomes" },
+  { title: "Football", category: "Football" },
+  { title: "Cricket", category: "Cricket" },
+  { title: "Basketball", category: "Basketball" },
+  { title: "Tennis", category: "Tennis" },
+  { title: "Volleyball", category: "Volleyball" },
+  { title: "Badminton", category: "Badminton" },
   { title: "Others", category: "Others" },
 ];
 
@@ -77,7 +57,7 @@ export const settings = [
     icon: icons.wallet,
   },
   {
-    title: "Profile",
+    title: "Profile", 
     icon: icons.person,
   },
   {
@@ -99,41 +79,6 @@ export const settings = [
   {
     title: "Invite Friends",
     icon: icons.people,
-  },
-];
-
-export const facilities = [
-  {
-    title: "Laundry",
-    icon: icons.laundry,
-  },
-  {
-    title: "Car Parking",
-    icon: icons.carPark,
-  },
-  {
-    title: "Sports Center",
-    icon: icons.run,
-  },
-  {
-    title: "Cutlery",
-    icon: icons.cutlery,
-  },
-  {
-    title: "Gym",
-    icon: icons.dumbell,
-  },
-  {
-    title: "Swimming pool",
-    icon: icons.swim,
-  },
-  {
-    title: "Wifi",
-    icon: icons.wifi,
-  },
-  {
-    title: "Pet Center",
-    icon: icons.dog,
   },
 ];
 

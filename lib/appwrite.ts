@@ -10,18 +10,17 @@ import {
   } from "react-native-appwrite";
   import * as Linking from "expo-linking";
   import { openAuthSessionAsync } from "expo-web-browser";
+ import { router } from "expo-router";
   
   export const config = {
     platform: "com.ak.turfujn",
     endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
     projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
     databaseId: process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
-    galleriesCollectionId:
-      process.env.EXPO_PUBLIC_APPWRITE_GALLERIES_COLLECTION_ID,
+    galleriesCollectionId: process.env.EXPO_PUBLIC_APPWRITE_GALLERIES_COLLECTION_ID,
     reviewsCollectionId: process.env.EXPO_PUBLIC_APPWRITE_REVIEWS_COLLECTION_ID,
     agentsCollectionId: process.env.EXPO_PUBLIC_APPWRITE_AGENTS_COLLECTION_ID,
-    turfsCollectionId:
-      process.env.EXPO_PUBLIC_APPWRITE_TURFS_COLLECTION_ID,
+    turfsCollectionId: process.env.EXPO_PUBLIC_APPWRITE_TURFS_COLLECTION_ID,
     bucketId: process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID,
     usersCollectionId: process.env.EXPO_PUBLIC_APPWRITE_USERS_COLLECTION_ID,
   };
@@ -157,10 +156,12 @@ import {
   
   export async function logout() {
     try {
-      const result = await account.deleteSession("current");
-      return result;
+      await account.deleteSession("current");
+      router.replace("/sign-in");
+      return true;
     } catch (error) {
       console.error(error);
+      router.replace("/sign-in");
       return false;
     }
   }

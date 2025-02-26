@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Button,
   FlatList,
   Image,
   Text,
@@ -20,6 +21,7 @@ import { Card, FeaturedCard } from "@/components/Cards";
 import { useAppwrite } from "@/lib/useAppwrite";
 import { useGlobalContext } from "@/lib/global-provider";
 import { getLatestTurfs, getTurfs } from "@/lib/appwrite";
+import seed from "@/lib/seed";
 
 const Home = () => {
   const { user } = useGlobalContext();
@@ -57,7 +59,8 @@ const Home = () => {
 
   return (
     <SafeAreaView className="h-full bg-white">
-      <FlatList
+{/* <Button title="Seed" onPress={seed}/>  */}
+    <FlatList
         data={turfs}
         numColumns={2}
         renderItem={({ item }) => (
