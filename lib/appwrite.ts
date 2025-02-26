@@ -139,6 +139,7 @@ import {
           );
           console.log("Existing user logged in successfully");
         }
+        // router.replace("/");
 
         return true;
       } catch (e) {
