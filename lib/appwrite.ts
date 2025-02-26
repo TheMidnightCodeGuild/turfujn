@@ -20,8 +20,8 @@ import {
       process.env.EXPO_PUBLIC_APPWRITE_GALLERIES_COLLECTION_ID,
     reviewsCollectionId: process.env.EXPO_PUBLIC_APPWRITE_REVIEWS_COLLECTION_ID,
     agentsCollectionId: process.env.EXPO_PUBLIC_APPWRITE_AGENTS_COLLECTION_ID,
-    propertiesCollectionId:
-      process.env.EXPO_PUBLIC_APPWRITE_PROPERTIES_COLLECTION_ID,
+    turfsCollectionId:
+      process.env.EXPO_PUBLIC_APPWRITE_TURFS_COLLECTION_ID,
     bucketId: process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID,
     usersCollectionId: process.env.EXPO_PUBLIC_APPWRITE_USERS_COLLECTION_ID,
   };
@@ -42,6 +42,17 @@ import {
       // Verify required environment variables
       if (!config.endpoint || !config.projectId || !config.databaseId || !config.usersCollectionId) {
         throw new Error("Missing required environment configuration");
+      }
+
+      // Check if there's an active session first
+      try {
+        const currentSession = await account.getSession('current');
+        if (currentSession) {
+          // If there's an active session, delete it first
+          await account.deleteSession('current');
+        }
+      } catch (e) {
+        // No active session, proceed with login
       }
 
       const redirectUri = Linking.createURL("/");
@@ -112,6 +123,7 @@ import {
               name: authenticatedUser.name,
               email: authenticatedUser.email,
               avatar: avatar.getInitials(authenticatedUser.name).toString(),
+              lastLoginAt: new Date().toISOString(), // Add initial login timestamp
             }
           );
           console.log("New user profile created successfully");
@@ -123,7 +135,7 @@ import {
             config.usersCollectionId,
             userDoc.$id,
             {
-              lastLogin: new Date().toISOString(),
+              lastLoginAt: new Date().toISOString(), // Use lastLoginAt instead of lastLogin
             }
           );
           console.log("Existing user logged in successfully");
@@ -152,6 +164,16 @@ import {
       return false;
     }
   }
+
+  export async function deleteSession(sessionId: string) {
+    try {
+      const result = await account.deleteSession(sessionId);
+      return result;
+    } catch (error) {
+      console.error("Failed to delete session:", error);
+      return false;
+    }
+  }
   
   export async function getCurrentUser() {
     try {
@@ -172,11 +194,11 @@ import {
     }
   }
   
-  export async function getLatestProperties() {
+  export async function getLatestTurfs() {
     try {
       const result = await databases.listDocuments(
         config.databaseId!,
-        config.propertiesCollectionId!,
+        config.turfsCollectionId!,
         [Query.orderDesc("$createdAt"), Query.limit(5)]
       );
   
@@ -187,7 +209,7 @@ import {
     }
   }
   
-  export async function getProperties({
+  export async function getTurfs({
     filter,
     query,
     limit,
@@ -215,7 +237,7 @@ import {
   
       const result = await databases.listDocuments(
         config.databaseId!,
-        config.propertiesCollectionId!,
+        config.turfsCollectionId!,
         buildQuery
       );
   
@@ -226,11 +248,11 @@ import {
     }
   }
   
-  export async function getPropertyById(id: string) {
+  export async function getTurfById(id: string) {
     try {
       const result = await databases.getDocument(
         config.databaseId!,
-        config.propertiesCollectionId!,
+        config.turfsCollectionId!,
         id
       );
       return result;

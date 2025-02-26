@@ -1,11 +1,11 @@
-import { Alert, SafeAreaView, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
-import { login } from '@/lib/appwrite'
-import { useGlobalContext } from '@/lib/global-provider'
+import { Alert, SafeAreaView, Text, TouchableOpacity } from "react-native";
+import React from "react";
+import { login } from "@/lib/appwrite";
+import { useGlobalContext } from "@/lib/global-provider";
 
-    const signIn = () => {
+const signIn = () => {
   const { refetch } = useGlobalContext();
-  const handleSignIn= async () => {
+  const handleSignIn = async () => {
     const result = await login();
     if (result) {
       refetch();
@@ -21,6 +21,6 @@ import { useGlobalContext } from '@/lib/global-provider'
       </TouchableOpacity>
     </SafeAreaView>
   );
-}
+};
 
-export default signIn
+export default signIn;
