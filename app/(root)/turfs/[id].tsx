@@ -118,6 +118,7 @@ const TurfDetails = () => {
                 <Image
                   source={{ uri: turf?.agent.avatar }}
                   className="size-14 rounded-full"
+                  alt="notfound"
                 />
 
                 <View className="flex flex-col items-start justify-center ml-3">
