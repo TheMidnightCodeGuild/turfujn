@@ -123,7 +123,7 @@ import {
               name: authenticatedUser.name,
               email: authenticatedUser.email,
               avatar: avatar.getInitials(authenticatedUser.name).toString(),
-              lastLoginAt: new Date().toISOString(), // Add initial login timestamp
+              bookings: [] // Initialize empty bookings array
             }
           );
           console.log("New user profile created successfully");
@@ -292,6 +292,7 @@ import {
 
   export async function createBooking(userId: string, turfId: string, startTime: Date, endTime: Date) {
     try {
+      // First create the booking
       const booking = await databases.createDocument(
         config.databaseId!,
         config.bookingsCollectionId!,
@@ -301,9 +302,31 @@ import {
           turfId,
           startTime: startTime.toISOString(),
           endTime: endTime.toISOString(),
-          // status: 'confirmed' // You can add more statuses like 'pending', 'cancelled' etc.
         }
       );
+
+      // Get the user document
+      const userDocs = await databases.listDocuments(
+        config.databaseId!,
+        config.usersCollectionId!,
+        [Query.equal("userId", userId)]
+      );
+
+      if (userDocs.documents.length > 0) {
+        const userDoc = userDocs.documents[0];
+        const currentBookings = userDoc.bookings || [];
+
+        // Update user document with new booking
+        await databases.updateDocument(
+          config.databaseId!,
+          config.usersCollectionId!,
+          userDoc.$id,
+          {
+            bookings: [...currentBookings, booking.$id]
+          }
+        );
+      }
+
       return booking;
     } catch (error) {
       console.error("Error creating booking:", error);
@@ -313,17 +336,30 @@ import {
 
   export async function getUserBookings(userId: string) {
     try {
-      const bookings = await databases.listDocuments(
+      console.log('Getting user with ID:', userId);
+      
+      if (!userId) throw new Error("User ID is required");
+
+      // Get the user document
+      console.log('Fetching user document...');
+      const userDocs = await databases.listDocuments(
         config.databaseId!,
-        config.bookingsCollectionId!,
-        [
-          Query.equal("userId", userId),
-          Query.orderDesc("$createdAt")
-        ]
+        config.usersCollectionId!,
+        [Query.equal("userId", userId)]
       );
-      return bookings.documents;
+
+      if (userDocs.documents.length === 0) {
+        console.log("No user found with ID:", userId);
+        return null;
+      }
+
+      const userDoc = userDocs.documents[0];
+      console.log('Found user:', userDoc);
+      
+      return userDoc;
+      
     } catch (error) {
-      console.error("Error fetching user bookings:", error);
+      console.error("Error fetching user:", error);
       throw error;
     }
   }
