@@ -23,6 +23,7 @@ import {
     turfsCollectionId: process.env.EXPO_PUBLIC_APPWRITE_TURFS_COLLECTION_ID,
     bucketId: process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID,
     usersCollectionId: process.env.EXPO_PUBLIC_APPWRITE_USERS_COLLECTION_ID,
+    bookingsCollectionId: process.env.EXPO_PUBLIC_APPWRITE_BOOKINGS_COLLECTION_ID,
   };
   
   export const client = new Client();
@@ -261,5 +262,68 @@ import {
     } catch (error) {
       console.error(error);
       return null;
+    }
+  }
+
+  export async function checkSlotAvailability(turfId: string, startTime: Date, endTime: Date) {
+    try {
+      const startISO = startTime.toISOString();
+      const endISO = endTime.toISOString();
+
+      const response = await databases.listDocuments(
+        config.databaseId!,
+        config.bookingsCollectionId!,
+        [
+          Query.equal("turfId", turfId),
+          Query.lessThan("startTime", endISO),
+          Query.greaterThan("endTime", startISO)
+        ]
+      );
+
+      return {
+        available: response.documents.length === 0,
+        existingBookings: response.documents
+      };
+    } catch (error) {
+      console.error("Error checking availability:", error);
+      throw error;
+    }
+  }
+
+  export async function createBooking(userId: string, turfId: string, startTime: Date, endTime: Date) {
+    try {
+      const booking = await databases.createDocument(
+        config.databaseId!,
+        config.bookingsCollectionId!,
+        ID.unique(),
+        {
+          userId,
+          turfId,
+          startTime: startTime.toISOString(),
+          endTime: endTime.toISOString(),
+          // status: 'confirmed' // You can add more statuses like 'pending', 'cancelled' etc.
+        }
+      );
+      return booking;
+    } catch (error) {
+      console.error("Error creating booking:", error);
+      throw error;
+    }
+  }
+
+  export async function getUserBookings(userId: string) {
+    try {
+      const bookings = await databases.listDocuments(
+        config.databaseId!,
+        config.bookingsCollectionId!,
+        [
+          Query.equal("userId", userId),
+          Query.orderDesc("$createdAt")
+        ]
+      );
+      return bookings.documents;
+    } catch (error) {
+      console.error("Error fetching user bookings:", error);
+      throw error;
     }
   }

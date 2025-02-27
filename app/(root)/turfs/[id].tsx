@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 
+
+
 import icons from "@/constants/icon";
 import images from "@/constants/images";
 import Comment from "@/components/Comment";
@@ -17,6 +19,8 @@ import { amenities } from "@/constants/data";
 
 import { useAppwrite } from "@/lib/useAppwrite";
 import { getTurfById } from "@/lib/appwrite";
+import { BookingModal } from "@/components/BookingModal";
+import { useState } from "react";
 
 const TurfDetails = () => {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -29,6 +33,8 @@ const TurfDetails = () => {
       id: id!,
     },
   });
+
+  const [showBookingModal, setShowBookingModal] = useState(false);
 
   return (
     <View>
@@ -255,20 +261,27 @@ const TurfDetails = () => {
             <Text className="text-black-200 text-xs font-rubik-medium">
               Price per hour
             </Text>
-            <Text
-              numberOfLines={1}
-              className="text-primary-300 text-start text-2xl font-rubik-bold"
-            >
+            <Text className="text-primary-300 text-start text-2xl font-rubik-bold">
               ${turf?.price}
             </Text>
           </View>
 
-          <TouchableOpacity className="flex-1 flex flex-row items-center justify-center bg-primary-300 py-3 rounded-full shadow-md shadow-zinc-400">
+          <TouchableOpacity 
+            onPress={() => setShowBookingModal(true)}
+            className="flex-1 flex flex-row items-center justify-center bg-primary-300 py-3 rounded-full shadow-md shadow-zinc-400"
+          >
             <Text className="text-white text-lg text-center font-rubik-bold">
               Book Now
             </Text>
           </TouchableOpacity>
         </View>
+
+        <BookingModal
+          visible={showBookingModal}
+          onClose={() => setShowBookingModal(false)}
+          turfId={id!}
+          turfName={turf?.name || ''}
+        />
       </View>
     </View>
   );
