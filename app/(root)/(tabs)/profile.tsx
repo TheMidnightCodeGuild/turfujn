@@ -8,12 +8,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import * as ImagePicker from 'expo-image-picker';
 
 import { logout } from "@/lib/appwrite";
 import { useGlobalContext } from "@/lib/global-provider";
 
 import icons from "@/constants/icon";
 import { settings } from "@/constants/data";
+import { router } from "expo-router";
 
 interface SettingsItemProp {
   icon: ImageSourcePropType;
@@ -58,6 +60,29 @@ const Profile = () => {
     }
   };
 
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (status !== 'granted') {
+      Alert.alert('Sorry, we need camera roll permissions to make this work!');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      // Here you would typically upload the image to your backend
+      // and update the user's avatar URL
+      Alert.alert('Success', 'Profile photo updated!');
+      refetch();
+    }
+  };
+
   return (
     <SafeAreaView className="h-full bg-white">
       <ScrollView
@@ -75,7 +100,7 @@ const Profile = () => {
               source={{ uri: user?.avatar }}
               className="size-44 relative rounded-full"
             />
-            <TouchableOpacity className="absolute bottom-11 right-2">
+            <TouchableOpacity className="absolute bottom-11 right-2" onPress={pickImage}>
               <Image source={icons.edit} className="size-9" />
             </TouchableOpacity>
 
@@ -89,9 +114,13 @@ const Profile = () => {
         </View>
 
         <View className="flex flex-col mt-5 border-t pt-5 border-primary-200">
-          {settings.slice(2).map((item, index) => (
+          {/* {settings.slice(2).map((item, index) => (
             <SettingsItem key={index} {...item} />
-          ))}
+          ))}  */}
+             <SettingsItem icon={icons.person} title="Profile" onPress={() => router.push('/UpdateProfile')}/>
+             <SettingsItem icon={icons.bell} title="Notifications"/>
+             <SettingsItem icon={icons.people} title="Invite friends"/>
+             
         </View>
 
         <View className="flex flex-col border-t mt-5 pt-5 border-primary-200">

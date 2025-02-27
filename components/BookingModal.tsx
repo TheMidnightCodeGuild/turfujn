@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, Alert, Platform, Pressable } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, Alert,Pressable } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { checkSlotAvailability, createBooking } from '@/lib/appwrite';
 import { useGlobalContext } from '@/lib/global-provider';
