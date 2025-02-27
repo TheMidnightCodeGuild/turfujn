@@ -17,7 +17,7 @@ const TabIcon = ({
       source={icon}
       tintColor={focused ? "green" : "green"}
       resizeMode="contain"
-      className="size-6"
+      className="size-7"
     />
     <Text
       className={`${
@@ -72,6 +72,16 @@ const TabsLayout = () => {
           headerShown: false,
           tabBarIcon: ({ focused }) => (
             <TabIcon focused={focused} icon={icons.person} title="Profile" />
+          ),
+        }}
+      />
+        <Tabs.Screen
+        name="bookings"
+        options={{
+          title: "Bookings",
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon focused={focused} icon={icons.booking} title="Bookings" />
           ),
         }}
       />
