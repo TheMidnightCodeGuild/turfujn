@@ -225,14 +225,14 @@ export async function getTurfs({
     const buildQuery = [Query.orderDesc("$createdAt")];
 
     if (filter && filter !== "All")
-      buildQuery.push(Query.equal("type", filter));
+      buildQuery.push(Query.equal("sports", filter));
 
     if (query)
       buildQuery.push(
         Query.or([
           Query.search("name", query),
           Query.search("address", query),
-          Query.search("type", query),
+          Query.search("sports", query),
         ])
       );
 
