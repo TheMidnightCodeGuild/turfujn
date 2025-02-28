@@ -8,6 +8,7 @@ import {
   View,
   Alert,
   Modal,
+  Keyboard,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
@@ -173,6 +174,10 @@ const Home = () => {
             </View>
           </View>
         )}
+        keyboardShouldPersistTaps="always"
+        keyboardDismissMode="none"
+        onScrollBeginDrag={Keyboard.dismiss}
+        removeClippedSubviews={false}
       />
     </SafeAreaView>
   );

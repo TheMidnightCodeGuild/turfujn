@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Keyboard,
 } from "react-native";
 import { useEffect } from "react";
 import { router, useLocalSearchParams } from "expo-router";
@@ -90,6 +91,9 @@ const Explore = () => {
             </View>
           </View>
         )}
+        keyboardShouldPersistTaps="handled"
+        onScrollBeginDrag={Keyboard.dismiss}
+        removeClippedSubviews={false}
       />
     </SafeAreaView>
   );
