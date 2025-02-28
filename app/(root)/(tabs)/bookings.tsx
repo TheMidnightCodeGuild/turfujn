@@ -36,7 +36,11 @@ export default function Bookings() {
           </Text>
         </View>
       ) : (
-        <ScrollView className="py-2">
+        <ScrollView 
+          className="flex-1 py-2" 
+          contentContainerStyle={{ paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}
+        >
           {Array.isArray(foundUser.bookings) && foundUser.bookings.length > 0 ? (
             foundUser.bookings.map((booking: any) => (
               <View key={booking.$id} className="mx-5 my-2 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
