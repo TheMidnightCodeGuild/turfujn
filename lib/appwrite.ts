@@ -336,11 +336,11 @@ import {
 
   export async function getUserBookings(userId: string) {
     try {
-      console.log('Getting user with ID:', userId);
+      console.log('Getting bookings for user:', userId);
       
       if (!userId) throw new Error("User ID is required");
 
-      // Get the user document
+      // First get the user document to get booking IDs
       console.log('Fetching user document...');
       const userDocs = await databases.listDocuments(
         config.databaseId!,
@@ -350,16 +350,66 @@ import {
 
       if (userDocs.documents.length === 0) {
         console.log("No user found with ID:", userId);
-        return null;
+        return [];
       }
 
       const userDoc = userDocs.documents[0];
-      console.log('Found user:', userDoc);
-      
-      return userDoc;
-      
+      const bookingIds = userDoc.bookings || [];
+      console.log('Found bookings IDs:', bookingIds);
+
+      if (bookingIds.length === 0) {
+        console.log('No bookings found for user');
+        return [];
+      }
+
+      // Get all bookings using the booking IDs from user document
+      console.log('Fetching booking documents...');
+      const bookings = await databases.listDocuments(
+        config.databaseId!,
+        config.bookingsCollectionId!,
+        [
+          Query.equal("$id", bookingIds),
+          // Query.orderDesc("$createdAt")
+        ]
+      );
+
+      // For each booking, get the associated turf details
+      console.log('Fetching turf details for each booking...');
+      const bookingsWithDetails = await Promise.all(
+        bookings.documents.map(async (booking) => {
+          try {
+            console.log('Fetching details for booking:', booking.$id);
+            const turf = await getTurfById(booking.turfId);
+            const now = new Date();
+            const bookingStart = new Date(booking.startTime);
+            
+            const status = bookingStart > now ? 'Upcoming' : 'Past';
+            console.log(`Booking ${booking.$id} status:`, status);
+
+            return {
+              ...booking,
+              turfName: turf?.name || 'Unknown Turf',
+              turfImage: turf?.image,
+              startTime: booking.startTime,
+              endTime: booking.endTime,
+              status
+            };
+          } catch (error) {
+            console.error(`Error fetching turf details for booking ${booking.$id}:`, error);
+            return {
+              ...booking,
+              turfName: 'Unknown Turf',
+              turfImage: null,
+              status: 'Error'
+            };
+          }
+        })
+      );
+
+      console.log('Successfully fetched all booking details');
+      return bookingsWithDetails;
     } catch (error) {
-      console.error("Error fetching user:", error);
+      console.error("Error fetching user bookings:", error);
       throw error;
     }
   }

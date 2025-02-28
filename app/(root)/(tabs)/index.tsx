@@ -6,8 +6,10 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Alert,
+  Modal,
 } from "react-native";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -17,6 +19,7 @@ import Search from "@/components/Search";
 import Filters from "@/components/Filters";
 import NoResults from "@/components/NoResults";
 import { Card, FeaturedCard } from "@/components/Cards";
+import LocationPicker from "@/components/LocationPicker";
 
 import { useAppwrite } from "@/lib/useAppwrite";
 import { useGlobalContext } from "@/lib/global-provider";
@@ -25,6 +28,12 @@ import seed from "@/lib/seed";
 
 const Home = () => {
   const { user } = useGlobalContext();
+  const [selectedLocation, setSelectedLocation] = useState<{
+    latitude: number;
+    longitude: number;
+    city: string;
+  } | null>(null);
+  const [showLocationPicker, setShowLocationPicker] = useState(false);
 
   const params = useLocalSearchParams<{ query?: string; filter?: string }>();
 
@@ -57,10 +66,22 @@ const Home = () => {
 
   const handleCardPress = (id: string) => router.push(`/turfs/${id}`);
 
+  const handleLocationSelect = (location: { latitude: number; longitude: number; city: string }) => {
+    setSelectedLocation(location);
+    setShowLocationPicker(false);
+  };
+
   return (
     <SafeAreaView className="h-full bg-white">
-{/* <Button title="Seed" onPress={seed}/>  */}
-    <FlatList
+      <Modal
+        visible={showLocationPicker}
+        animationType="slide"
+        onRequestClose={() => setShowLocationPicker(false)}
+      >
+        <LocationPicker onLocationSelect={handleLocationSelect} />
+      </Modal>
+
+      <FlatList
         data={turfs}
         numColumns={2}
         renderItem={({ item }) => (
@@ -86,12 +107,15 @@ const Home = () => {
                   className="size-12 rounded-full"
                 /> */}
 
-                <View className="flex flex-row items-center ml-2">
+                <TouchableOpacity 
+                  onPress={() => setShowLocationPicker(true)}
+                  className="flex flex-row items-center ml-2"
+                >
                   <Image source={icons.location} className="size-10 mr-1" />
                   <Text className="text-base font-rubik-medium text-black-300">
-                    Current Location
+                    {selectedLocation ? selectedLocation.city : "Select Location"}
                   </Text>
-                </View>
+                </TouchableOpacity>
               </View>
               <Image source={icons.bell} className="size-6" />
             </View>
