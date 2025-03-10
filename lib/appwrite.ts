@@ -316,6 +316,7 @@ export async function createBooking(userId: string, turfId: string, date: Date, 
         turfId,
         date: date.toISOString(),
         slots,
+        status: "Reserved" // Set default status
       }
     );
 
