@@ -32,6 +32,7 @@ import wifi from "@/assets/icons/wifi.png";
 import location from "@/assets/icons/location.png";
 import edit from "@/assets/icons/edit.png";
 import booking from "@/assets/icons/booking.png";
+import trophy from "@/assets/icons/trophy.png";
 
 export default {
   google,
@@ -67,5 +68,6 @@ export default {
   wifi,
   location,
   edit,
-  booking
-};
+  booking,
+  trophy
+  };

@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { TextInput, View, Image, Keyboard, TouchableOpacity } from 'react-native';
 import icons from '@/constants/icon';
+import { useGlobalContext } from '@/lib/global-provider';
 
 const Search = () => {
   const router = useRouter();
   const params = useLocalSearchParams<{ query?: string }>();
   const [searchText, setSearchText] = useState(params.query || '');
+  const { isDarkMode } = useGlobalContext();
 
   const handleSearch = () => {
     Keyboard.dismiss();
@@ -32,23 +34,29 @@ const Search = () => {
   };
 
   return (
-    <View className="flex-row items-center bg-white-200 rounded-xl mt-5 px-4 py-2">
-      <Image source={icons.search} className="size-6" />
+    <View className={`flex-row items-center rounded-xl mt-5 px-4 py-2 ${isDarkMode ? 'bg-black' : 'bg-white-200'}`}>
+      <Image 
+        source={icons.search} 
+        className="size-6" 
+        tintColor={isDarkMode ? "#fff" : "#191D31"}
+      />
       <TextInput
         placeholder="Search address, or near you"
         value={searchText}
         onChangeText={handleChangeText}
-        className="flex-1 ml-2 font-rubik text-base text-black-300"
+        className={`flex-1 ml-2 font-rubik text-base ${isDarkMode ? 'text-white placeholder:text-white/50' : 'text-black-300 placeholder:text-black-300/50'}`}
         autoCorrect={false}
         autoCapitalize="none"
         returnKeyType="search"
         onSubmitEditing={handleSearch}
+        placeholderTextColor={isDarkMode ? "rgba(255,255,255,0.5)" : "rgba(25,29,49,0.5)"}
       />
       {searchText ? (
         <TouchableOpacity onPress={handleClear}>
           <Image 
             source={icons.backArrow} 
             className="size-5"
+            tintColor={isDarkMode ? "#fff" : "#191D31"}
           />
         </TouchableOpacity>
       ) : null}

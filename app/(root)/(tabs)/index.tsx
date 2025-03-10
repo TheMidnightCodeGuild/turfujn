@@ -1,14 +1,13 @@
 import {
   ActivityIndicator,
-  Button,
   FlatList,
   Image,
   Text,
   TouchableOpacity,
   View,
-  Alert,
   Modal,
   Keyboard,
+  Switch,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
@@ -25,10 +24,10 @@ import LocationPicker from "@/components/LocationPicker";
 import { useAppwrite } from "@/lib/useAppwrite";
 import { useGlobalContext } from "@/lib/global-provider";
 import { getLatestTurfs, getTurfs } from "@/lib/appwrite";
-import seed from "@/lib/seed";
+// import seed from "@/lib/seed";
 
 const Home = () => {
-  const { user } = useGlobalContext();
+  const { user, isDarkMode, toggleTheme } = useGlobalContext();
   const [selectedLocation, setSelectedLocation] = useState<{
     latitude: number;
     longitude: number;
@@ -73,7 +72,7 @@ const Home = () => {
   };
 
   return (
-    <SafeAreaView className="h-full bg-white">
+    <SafeAreaView className={`h-full ${isDarkMode ? 'bg-black-300' : 'bg-white'}`}>
       <Modal
         visible={showLocationPicker}
         animationType="slide"
@@ -113,19 +112,22 @@ const Home = () => {
                   className="flex flex-row items-center ml-2"
                 >
                   <Image source={icons.location} className="size-10 mr-1" />
-                  <Text className="text-base font-rubik-medium text-black-300">
+                  <Text className={`text-base font-rubik-medium ${isDarkMode ? 'text-white' : 'text-black-300'}`}>
                     {selectedLocation ? selectedLocation.city : "Select Location"}
                   </Text>
                 </TouchableOpacity>
               </View>
-              <Image source={icons.bell} className="size-6" />
+              <View className="flex flex-row items-center gap-4">
+                <Switch value={isDarkMode} onValueChange={toggleTheme} />
+                <Image source={icons.bell} className="size-6" />
+              </View>
             </View>
 
             <Search />
 
             <View className="my-5">
               <View className="flex flex-row items-center justify-between">
-                <Text className="text-xl font-rubik-bold text-black-300">
+                <Text className={`text-xl font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black-300'}`}>
                   Featured
                 </Text>
                 <TouchableOpacity>
@@ -160,7 +162,7 @@ const Home = () => {
 
             <View className="mt-5">
               <View className="flex flex-row items-center justify-between">
-                <Text className="text-xl font-rubik-bold text-black-300">
+                <Text className={`text-xl font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black-300'}`}>
                   Our Recommendation
                 </Text>
                 <TouchableOpacity>

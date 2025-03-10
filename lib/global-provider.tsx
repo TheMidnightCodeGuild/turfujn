@@ -1,14 +1,17 @@
-import React, { createContext, useContext, ReactNode } from "react";
+import React, { createContext, useContext, ReactNode, useState } from "react";
+import { DarkTheme, DefaultTheme, ThemeProvider as NavThemeProvider } from "@react-navigation/native";
+import { useColorScheme } from "react-native";
 
 import { getCurrentUser } from "./appwrite";
 import { useAppwrite } from "./useAppwrite";
-import { Redirect } from "expo-router";
 
 interface GlobalContextType {
   isLogged: boolean;
   user: User | null;
   loading: boolean;
   refetch: () => void;
+  isDarkMode: boolean;
+  toggleTheme: () => void;
 }
 
 interface User {
@@ -25,6 +28,9 @@ interface GlobalProviderProps {
 }
 
 export const GlobalProvider = ({ children }: GlobalProviderProps) => {
+  const systemColorScheme = useColorScheme();
+  const [isDarkMode, setIsDarkMode] = useState(systemColorScheme === "dark");
+
   const {
     data: user,
     loading,
@@ -35,6 +41,10 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
 
   const isLogged = !!user;
 
+  const toggleTheme = () => {
+    setIsDarkMode((prev) => !prev);
+  };
+
   return (
     <GlobalContext.Provider
       value={{
@@ -42,9 +52,13 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
         user,
         loading,
         refetch: () => refetch({}),
+        isDarkMode,
+        toggleTheme,
       }}
     >
-      {children}
+      <NavThemeProvider value={isDarkMode ? DarkTheme : DefaultTheme}>
+        {children}
+      </NavThemeProvider>
     </GlobalContext.Provider>
   );
 };

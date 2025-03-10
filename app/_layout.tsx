@@ -2,11 +2,11 @@ import { Stack } from "expo-router";
 import "@/app/globals.css";
 import { useEffect } from "react";
 import { useFonts } from "expo-font";
-import { GlobalProvider } from "@/lib/global-provider";
+import { GlobalProvider, useGlobalContext } from "@/lib/global-provider";
 import * as SplashScreen from "expo-splash-screen";
 
-
-export default function RootLayout() {
+const AppContainer = () => {
+  const { isDarkMode } = useGlobalContext();
   const [fontsLoaded] = useFonts({
     "Rubik-Bold": require("../assets/fonts/Rubik-Bold.ttf"),
     "Rubik-ExtraBold": require("../assets/fonts/Rubik-ExtraBold.ttf"), 
@@ -27,10 +27,21 @@ export default function RootLayout() {
   }
 
   return (
+    <Stack 
+      screenOptions={{ 
+        headerShown: false,
+        contentStyle: {
+          backgroundColor: isDarkMode ? '#000' : '#fff'
+        }
+      }} 
+    />
+  );
+}
 
-      <GlobalProvider>
-        <Stack screenOptions={{ headerShown: false }} />
-      </GlobalProvider>
- 
+export default function RootLayout() {
+  return (
+    <GlobalProvider>
+      <AppContainer />
+    </GlobalProvider>
   );
 }

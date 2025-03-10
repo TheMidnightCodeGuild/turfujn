@@ -31,24 +31,27 @@ const SettingsItem = ({
   onPress,
   textStyle,
   showArrow = true,
-}: SettingsItemProp) => (
-  <TouchableOpacity
-    onPress={onPress}
-    className="flex flex-row items-center justify-between py-3"
-  >
-    <View className="flex flex-row items-center gap-3">
-      <Image source={icon} className="size-6" />
-      <Text className={`text-lg font-rubik-medium text-black-300 ${textStyle}`}>
-        {title}
-      </Text>
-    </View>
+}: SettingsItemProp) => {
+  const { isDarkMode } = useGlobalContext();
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      className="flex flex-row items-center justify-between py-3"
+    >
+      <View className="flex flex-row items-center gap-3">
+        <Image source={icon} className="size-6" />
+        <Text className={`text-lg font-rubik-medium ${isDarkMode ? 'text-white' : 'text-black-300'} ${textStyle}`}>
+          {title}
+        </Text>
+      </View>
 
-    {showArrow && <Image source={icons.rightArrow} className="size-5" />}
-  </TouchableOpacity>
-);
+      {showArrow && <Image source={icons.rightArrow} className="size-5" />}
+    </TouchableOpacity>
+  );
+};
 
 const Profile = () => {
-  const { user, refetch } = useGlobalContext();
+  const { user, refetch, isDarkMode } = useGlobalContext();
 
   const handleLogout = async () => {
     const result = await logout();
@@ -84,13 +87,13 @@ const Profile = () => {
   };
 
   return (
-    <SafeAreaView className="h-full bg-white">
+    <SafeAreaView className={`h-full ${isDarkMode ? 'bg-black-300' : 'bg-white'}`}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerClassName="pb-32 px-7"
       >
         <View className="flex flex-row items-center justify-between mt-5">
-          <Text className="text-xl font-rubik-bold">Profile</Text>
+          <Text className={`text-xl font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black-300'}`}>Profile</Text>
           <Image source={icons.bell} className="size-5" />
         </View>
 
@@ -104,7 +107,7 @@ const Profile = () => {
               <Image source={icons.edit} className="size-9" />
             </TouchableOpacity>
 
-            <Text className="text-2xl font-rubik-bold mt-2">{user?.name}</Text>
+            <Text className={`text-2xl font-rubik-bold mt-2 ${isDarkMode ? 'text-white' : 'text-black-300'}`}>{user?.name}</Text>
           </View>
         </View>
 

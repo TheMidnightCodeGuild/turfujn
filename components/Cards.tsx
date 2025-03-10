@@ -2,6 +2,7 @@ import icons from "@/constants/icon";
 import images from "@/constants/images";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { Models } from "react-native-appwrite";
+import { useGlobalContext } from "@/lib/global-provider";
 
 interface Props {
   item: Models.Document;
@@ -9,6 +10,8 @@ interface Props {
 }
 
 export const FeaturedCard = ({ item, onPress }: Props) => {
+  const { isDarkMode } = useGlobalContext();
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -51,9 +54,11 @@ export const FeaturedCard = ({ item, onPress }: Props) => {
 };
 
 export const Card = ({ item, onPress }: Props) => {
+  const { isDarkMode } = useGlobalContext();
+
   return (
     <TouchableOpacity
-      className="w-full mt-4 px-3 py-4 rounded-lg bg-white shadow-lg shadow-black-100/70 relative"
+      className={`w-full mt-4 px-3 py-4 rounded-lg ${isDarkMode ? 'bg-black-100' : 'bg-white'} shadow-lg shadow-black-100/70 relative`}
       onPress={onPress}
     >
       <View className="flex flex-row items-center absolute px-2 top-5 right-5 bg-white/90 p-1 rounded-full z-50">
@@ -66,21 +71,21 @@ export const Card = ({ item, onPress }: Props) => {
       <Image source={{ uri: item.image }} className="w-full h-40 rounded-lg" />
 
       <View className="flex flex-col mt-2">
-        <Text className="text-base font-rubik-bold text-black-300">
+        <Text className={`text-base font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black-300'}`}>
           {item.name}
         </Text>
-        <Text className="text-xs font-rubik text-black-100">
+        <Text className={`text-xs font-rubik ${isDarkMode ? 'text-white' : 'text-black-100'}`}>
           {item.address}
         </Text>
 
         <View className="flex flex-row items-center justify-between mt-2">
-          <Text className="text-base font-rubik-bold text-black-100">
+          <Text className={`text-base font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black-100'}`}>
             ${item.price}
           </Text>
           <Image
             source={icons.heart}
             className="w-5 h-5 mr-2"
-            tintColor="#191D31"
+            tintColor={isDarkMode ? "#fff" : "#191D31"}
           />
         </View>
       </View>

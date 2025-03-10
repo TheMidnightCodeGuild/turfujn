@@ -1,29 +1,31 @@
 import { Tabs } from "expo-router";
 import { Image, ImageSourcePropType, Text, View } from "react-native";
-
-import  icons  from "@/constants/icon";
+import { useGlobalContext } from "@/lib/global-provider";
+import icons from "@/constants/icon";
 
 const TabIcon = ({
   focused,
   icon,
   title,
+  isDarkMode,
 }: {
   focused: boolean;
   icon: ImageSourcePropType;
   title: string;
+  isDarkMode: boolean;
 }) => (
   <View className="flex-1 mt-3 flex flex-col items-center">
     <Image
       source={icon}
-      tintColor={focused ? "green" : "green"}
+      tintColor={focused ? "green" : isDarkMode ? "white" : "black"}
       resizeMode="contain"
       className="size-7"
     />
     <Text
       className={`${
         focused
-          ? "text-black font-rubik-medium"
-          : "text-black font-rubik"
+          ? `${isDarkMode ? "text-white" : "text-black"} font-rubik-medium`
+          : `${isDarkMode ? "text-white" : "text-black"} font-rubik`
       } text-xs w-full text-center mt-1`}
     >
       {title}
@@ -32,14 +34,16 @@ const TabIcon = ({
 );
 
 const TabsLayout = () => {
+  const { isDarkMode } = useGlobalContext();
+
   return (
     <Tabs
       screenOptions={{
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: "white",
+          backgroundColor: isDarkMode ? '#000' : 'white',
           position: "absolute",
-          borderTopColor: "#0061FF1A",
+          borderTopColor: isDarkMode ? "#333" : "#0061FF1A",
           borderTopWidth: 1,
           minHeight: 70,
         },
@@ -51,7 +55,7 @@ const TabsLayout = () => {
           title: "Home",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.home} title="Home" />
+            <TabIcon focused={focused} icon={icons.home} title="Home" isDarkMode={isDarkMode} />
           ),
         }}
       />
@@ -61,17 +65,27 @@ const TabsLayout = () => {
           title: "Explore",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.search} title="Explore" />
+            <TabIcon focused={focused} icon={icons.search} title="Explore" isDarkMode={isDarkMode} />
           ),
         }}
       />
-        <Tabs.Screen
+       <Tabs.Screen
+        name="tournament"
+        options={{
+          title: "Tournament",
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon focused={focused} icon={icons.trophy} title="Tournament" isDarkMode={isDarkMode} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="bookings"
         options={{
           title: "Bookings",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.booking} title="Bookings" />
+            <TabIcon focused={focused} icon={icons.booking} title="Bookings" isDarkMode={isDarkMode} />
           ),
         }}
       />
@@ -81,11 +95,10 @@ const TabsLayout = () => {
           title: "Profile",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.person} title="Profile" />
+            <TabIcon focused={focused} icon={icons.person} title="Profile" isDarkMode={isDarkMode} />
           ),
         }}
       />
-      
     </Tabs>
   );
 };
