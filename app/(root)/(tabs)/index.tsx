@@ -72,7 +72,7 @@ const Home = () => {
   };
 
   return (
-    <SafeAreaView className={`h-full ${isDarkMode ? 'bg-black-300' : 'bg-white'}`}>
+    <SafeAreaView className={`h-full ${isDarkMode ? 'bg-black' : 'bg-white'}`}>
       <Modal
         visible={showLocationPicker}
         animationType="slide"
