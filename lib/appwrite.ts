@@ -265,23 +265,37 @@ export async function getTurfById(id: string) {
   }
 }
 
-export async function checkSlotAvailability(turfId: string, startTime: Date, endTime: Date) {
+export async function checkSlotAvailability(turfId: string, date: Date, slotIds: string[]) {
   try {
-    const startISO = startTime.toISOString();
-    const endISO = endTime.toISOString();
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
 
     const response = await databases.listDocuments(
       config.databaseId!,
       config.bookingsCollectionId!,
       [
         Query.equal("turfId", turfId),
-        Query.lessThan("startTime", endISO),
-        Query.greaterThan("endTime", startISO)
+        Query.greaterThanEqual("date", startOfDay.toISOString()),
+        Query.lessThanEqual("date", endOfDay.toISOString()),
       ]
     );
 
+    // Get all booked slots for the day
+    const bookedSlots = response.documents.reduce((acc: string[], booking) => {
+      return [...acc, ...(booking.slots || [])];
+    }, []);
+
+    // Check if any of the requested slots are already booked
+    const unavailableSlots = slotIds.filter(slotId => 
+      bookedSlots.includes(slotId)
+    );
+
     return {
-      available: response.documents.length === 0,
+      available: unavailableSlots.length === 0,
+      unavailableSlots,
       existingBookings: response.documents
     };
   } catch (error) {
@@ -290,7 +304,7 @@ export async function checkSlotAvailability(turfId: string, startTime: Date, end
   }
 }
 
-export async function createBooking(userId: string, turfId: string, startTime: Date, endTime: Date) {
+export async function createBooking(userId: string, turfId: string, date: Date, slots: string[]) {
   try {
     // First create the booking
     const booking = await databases.createDocument(
@@ -300,12 +314,12 @@ export async function createBooking(userId: string, turfId: string, startTime: D
       {
         userId,
         turfId,
-        startTime: startTime.toISOString(),
-        endTime: endTime.toISOString(),
+        date: date.toISOString(),
+        slots,
       }
     );
 
-    // Get the user document
+    // Update user's bookings array
     const userDocs = await databases.listDocuments(
       config.databaseId!,
       config.usersCollectionId!,
@@ -316,7 +330,6 @@ export async function createBooking(userId: string, turfId: string, startTime: D
       const userDoc = userDocs.documents[0];
       const currentBookings = userDoc.bookings || [];
 
-      // Update user document with new booking
       await databases.updateDocument(
         config.databaseId!,
         config.usersCollectionId!,
