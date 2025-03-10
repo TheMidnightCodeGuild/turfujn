@@ -58,7 +58,7 @@ export const Card = ({ item, onPress }: Props) => {
 
   return (
     <TouchableOpacity
-      className={`w-full mt-4 px-3 py-4 rounded-lg ${isDarkMode ? 'bg-black-100' : 'bg-white'} shadow-lg shadow-black-100/70 relative`}
+      className={`w-full mt-4 px-3 py-4 rounded-lg border-2 ${isDarkMode ? 'border-white/10 bg-black' : 'border-black/10 bg-white'}  relative`}
       onPress={onPress}
     >
       <View className="flex flex-row items-center absolute px-2 top-5 right-5 bg-white/90 p-1 rounded-full z-50">

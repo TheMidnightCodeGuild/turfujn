@@ -48,7 +48,7 @@ const Explore = () => {
   const handleCardPress = (id: string) => router.push(`/turfs/${id}`);
 
   return (
-    <SafeAreaView className={`h-full ${isDarkMode ? 'bg-black-300' : 'bg-white'}`}>
+    <SafeAreaView className={`h-full ${isDarkMode ? 'bg-black' : 'bg-white'}`}>
       <FlatList
         data={turfs}
         numColumns={2}
@@ -71,15 +71,15 @@ const Explore = () => {
             <View className="flex flex-row items-center justify-between mt-5">
               <TouchableOpacity
                 onPress={() => router.back()}
-                className="flex flex-row bg-primary-200 rounded-full size-11 items-center justify-center"
+                className="flex flex-row bg-primary-200 rounded-full size-11 items-center justify-center border-white border"
               >
-                <Image source={icons.backArrow} className="size-5" />
+                <Image source={icons.backArrow} className="size-5 " tintColor={isDarkMode ? 'white' : '#1A1A1A'} />
               </TouchableOpacity>
 
               <Text className={`text-base mr-2 text-center font-rubik-medium ${isDarkMode ? 'text-white' : 'text-black-300'}`}>
                 Search for Your Ideal Home
               </Text>
-              <Image source={icons.bell} className="w-6 h-6" />
+              <Image source={icons.bell} className="w-6 h-6" tintColor={isDarkMode ? 'white' : '#1A1A1A'} />
             </View>
 
             <Search />

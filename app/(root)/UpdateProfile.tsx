@@ -34,7 +34,7 @@ const SPORTS = [
 ];
 
 const UpdateProfile = () => {
-  const { user, refetch } = useGlobalContext();
+  const { user, refetch, isDarkMode } = useGlobalContext();
   const [name, setName] = useState((user as User)?.name || '');
   const [username, setUsername] = useState((user as User)?.username || '');
   const [bio, setBio] = useState((user as User)?.bio || '');
@@ -75,7 +75,7 @@ const UpdateProfile = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className={`flex-1 ${isDarkMode ? 'bg-black' : 'bg-white'}`}>
       <ScrollView 
         showsVerticalScrollIndicator={false}
         contentContainerClassName="px-7 pb-32"
@@ -83,11 +83,11 @@ const UpdateProfile = () => {
         <View className="flex-row items-center justify-between mt-5">
           <TouchableOpacity 
             onPress={() => router.back()}
-            className="bg-gray-100 p-2 rounded-full"
+            className={`${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} p-2 rounded-full`}
           >
-            <Image source={icons.backArrow} className="size-6" />
+            <Image source={icons.backArrow} className="size-6" tintColor={isDarkMode ? 'white' : '#1A1A1A'} />
           </TouchableOpacity>
-          <Text className="text-xl font-rubik-bold">Edit Profile</Text>
+          <Text className={`text-xl font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>Edit Profile</Text>
           <View className="size-6" />
         </View>
 
@@ -105,90 +105,96 @@ const UpdateProfile = () => {
 
         <View className="mt-10 space-y-6">
           <View>
-            <Text className="text-base font-rubik-medium text-black-300 mb-2">
+            <Text className={`text-base font-rubik-medium ${isDarkMode ? 'text-white' : 'text-black-300'} mb-2`}>
               Full Name
             </Text>
             <TextInput
               value={name}
               onChangeText={setName}
               placeholder="Enter your name"
-              className="border border-primary-200 rounded-xl p-4 text-base font-rubik bg-gray-50"
+              placeholderTextColor={isDarkMode ? '#666' : undefined}
+              className={`border border-primary-200 rounded-xl p-4 text-base font-rubik ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-50 text-black'}`}
             />
           </View>
 
           <View>
-            <Text className="text-base font-rubik-medium text-black-300 mb-2">
+            <Text className={`text-base font-rubik-medium ${isDarkMode ? 'text-white' : 'text-black-300'} mb-2`}>
               Username
             </Text>
             <TextInput
               value={username}
               onChangeText={setUsername}
               placeholder="Enter your username"
-              className="border border-primary-200 rounded-xl p-4 text-base font-rubik bg-gray-50"
+              placeholderTextColor={isDarkMode ? '#666' : undefined}
+              className={`border border-primary-200 rounded-xl p-4 text-base font-rubik ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-50 text-black'}`}
             />
           </View>
 
           <View>
-            <Text className="text-base font-rubik-medium text-black-300 mb-2">
+            <Text className={`text-base font-rubik-medium ${isDarkMode ? 'text-white' : 'text-black-300'} mb-2`}>
               Bio
             </Text>
             <TextInput
               value={bio}
               onChangeText={setBio}
               placeholder="Write something about yourself"
+              placeholderTextColor={isDarkMode ? '#666' : undefined}
               multiline
-              className="border border-primary-200 rounded-xl p-4 text-base font-rubik bg-gray-50 h-20"
+              className={`border border-primary-200 rounded-xl p-4 text-base font-rubik h-20 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-50 text-black'}`}
             />
           </View>
 
           <View>
-            <Text className="text-base font-rubik-medium text-black-300 mb-2">
+            <Text className={`text-base font-rubik-medium ${isDarkMode ? 'text-white' : 'text-black-300'} mb-2`}>
               Date of Birth
             </Text>
             <TextInput
               value={dob}
               onChangeText={setDob}
               placeholder="YYYY-MM-DD"
+              placeholderTextColor={isDarkMode ? '#666' : undefined}
               keyboardType="numeric"
-              className="border border-primary-200 rounded-xl p-4 text-base font-rubik bg-gray-50"
+              className={`border border-primary-200 rounded-xl p-4 text-base font-rubik ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-50 text-black'}`}
             />
           </View>
 
           <View>
-            <Text className="text-base font-rubik-medium text-black-300 mb-2">
+            <Text className={`text-base font-rubik-medium ${isDarkMode ? 'text-white' : 'text-black-300'} mb-2`}>
               Email Address
             </Text>
             <TextInput
               value={email}
               onChangeText={setEmail}
               placeholder="Enter your email"
+              placeholderTextColor={isDarkMode ? '#666' : undefined}
               keyboardType="email-address"
-              className="border border-primary-200 rounded-xl p-4 text-base font-rubik bg-gray-50"
+              className={`border border-primary-200 rounded-xl p-4 text-base font-rubik ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-50 text-black'}`}
             />
           </View>
 
           <View>
-            <Text className="text-base font-rubik-medium text-black-300 mb-2">
+            <Text className={`text-base font-rubik-medium ${isDarkMode ? 'text-white' : 'text-black-300'} mb-2`}>
               Phone Number
             </Text>
             <TextInput
               value={phone}
               onChangeText={setPhone}
               placeholder="Enter your phone number"
+              placeholderTextColor={isDarkMode ? '#666' : undefined}
               keyboardType="phone-pad"
-              className="border border-primary-200 rounded-xl p-4 text-base font-rubik bg-gray-50"
+              className={`border border-primary-200 rounded-xl p-4 text-base font-rubik ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-50 text-black'}`}
             />
           </View>
 
           <View>
-            <Text className="text-base font-rubik-medium text-black-300 mb-2">
+            <Text className={`text-base font-rubik-medium ${isDarkMode ? 'text-white' : 'text-black-300'} mb-2`}>
               Preferred Sports
             </Text>
             <TouchableOpacity
               onPress={() => setShowSportPicker(true)}
-              className="border border-primary-200 rounded-xl p-4 bg-gray-50"
+              className={`border border-primary-200 rounded-xl p-4 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}
             >
-              <Text className="text-base font-rubik">
+              <Text className={`text-base font-rubik ${isDarkMode ? 'text-white' : 'text-black'}`}>
                 {selectedSports.length > 0 
                   ? selectedSports.join(', ')
                   : 'Select sports'
@@ -214,9 +220,9 @@ const UpdateProfile = () => {
           animationType="slide"
         >
           <View className="flex-1 justify-center items-center bg-black/50">
-            <View className="bg-white rounded-3xl p-5 w-[90%]">
+            <View className={`rounded-3xl p-5 w-[90%] ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
               <View className="flex-row justify-between items-center mb-5">
-                <Text className="text-xl font-rubik-bold">Select Sports</Text>
+                <Text className={`text-xl font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>Select Sports</Text>
                 <TouchableOpacity onPress={() => setShowSportPicker(false)}>
                   <Text className="text-primary-300 font-rubik-medium">Done</Text>
                 </TouchableOpacity>
@@ -226,12 +232,12 @@ const UpdateProfile = () => {
                 <TouchableOpacity
                   key={sport}
                   onPress={() => toggleSport(sport)}
-                  className={`p-4 border-b border-gray-100 flex-row justify-between items-center ${
+                  className={`p-4 border-b ${isDarkMode ? 'border-gray-800' : 'border-gray-100'} flex-row justify-between items-center ${
                     selectedSports.includes(sport) ? 'bg-primary-100' : ''
                   }`}
                 >
                   <Text className={`text-lg font-rubik ${
-                    selectedSports.includes(sport) ? 'text-primary-300' : 'text-black-300'
+                    selectedSports.includes(sport) ? 'text-primary-300' : isDarkMode ? 'text-white' : 'text-black-300'
                   }`}>
                     {sport}
                   </Text>

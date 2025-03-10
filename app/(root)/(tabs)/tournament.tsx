@@ -6,7 +6,7 @@ const Tournament = () => {
   const { isDarkMode } = useGlobalContext();
 
   return (
-    <SafeAreaView className={`h-full ${isDarkMode ? 'bg-black-300' : 'bg-white'}`}>
+    <SafeAreaView className={`h-full ${isDarkMode ? 'bg-black' : 'bg-white'}`}>
       <View className="flex-1 items-center justify-center">
         <Image 
           source={icons.trophy}

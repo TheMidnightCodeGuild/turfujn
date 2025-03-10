@@ -39,13 +39,13 @@ const SettingsItem = ({
       className="flex flex-row items-center justify-between py-3"
     >
       <View className="flex flex-row items-center gap-3">
-        <Image source={icon} className="size-6" />
+        <Image source={icon} className="size-6" tintColor={isDarkMode ? 'white' : '#1A1A1A'} />
         <Text className={`text-lg font-rubik-medium ${isDarkMode ? 'text-white' : 'text-black-300'} ${textStyle}`}>
           {title}
         </Text>
       </View>
 
-      {showArrow && <Image source={icons.rightArrow} className="size-5" />}
+      {showArrow && <Image source={icons.rightArrow} className="size-5" tintColor={isDarkMode ? 'white' : '#1A1A1A'} />}
     </TouchableOpacity>
   );
 };
@@ -87,14 +87,14 @@ const Profile = () => {
   };
 
   return (
-    <SafeAreaView className={`h-full ${isDarkMode ? 'bg-black-300' : 'bg-white'}`}>
+    <SafeAreaView className={`h-full ${isDarkMode ? 'bg-black' : 'bg-white'}`}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerClassName="pb-32 px-7"
       >
         <View className="flex flex-row items-center justify-between mt-5">
           <Text className={`text-xl font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black-300'}`}>Profile</Text>
-          <Image source={icons.bell} className="size-5" />
+          <Image source={icons.bell} className="size-5" tintColor={isDarkMode ? 'white' : '#1A1A1A'} />
         </View>
 
         <View className="flex flex-row justify-center mt-5">
@@ -104,7 +104,7 @@ const Profile = () => {
               className="size-44 relative rounded-full"
             />
             <TouchableOpacity className="absolute bottom-11 right-2" onPress={pickImage}>
-              <Image source={icons.edit} className="size-9" />
+              <Image source={icons.edit} className="size-9" tintColor={isDarkMode ? 'white' : '#1A1A1A'} />
             </TouchableOpacity>
 
             <Text className={`text-2xl font-rubik-bold mt-2 ${isDarkMode ? 'text-white' : 'text-black-300'}`}>{user?.name}</Text>

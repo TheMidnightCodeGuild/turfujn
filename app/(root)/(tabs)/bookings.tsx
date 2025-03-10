@@ -79,7 +79,7 @@ export default function Bookings() {
   };
 
   return (
-    <SafeAreaView className={`flex-1 ${isDarkMode ? 'bg-black-300' : 'bg-white'}`}>
+    <SafeAreaView className={`flex-1 ${isDarkMode ? 'bg-black' : 'bg-white'}`}>
       {/* Header */}
       <View className={`px-5 py-6 border-b ${isDarkMode ? 'border-gray-800' : 'border-gray-100'}`}>
         <Text className={`text-3xl font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
