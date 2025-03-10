@@ -12,6 +12,43 @@ import { getUserBookings } from "@/lib/appwrite";
 import { useGlobalContext } from "@/lib/global-provider";
 import { TIME_SLOTS } from "@/constants/data";
 
+// Define booking status type
+type BookingStatus = 'Reserved' | 'Confirmed' | 'Cancelled';
+
+// Define status colors with proper typing
+const STATUS_COLORS: Record<BookingStatus, {
+  bg: string;
+  text: string;
+  dot: string;
+}> = {
+  Reserved: {
+    bg: "bg-yellow-100",
+    text: "text-yellow-800",
+    dot: "bg-yellow-400"
+  },
+  Confirmed: {
+    bg: "bg-green-100",
+    text: "text-green-800",
+    dot: "bg-green-400"
+  },
+  Cancelled: {
+    bg: "bg-red-100",
+    text: "text-red-800",
+    dot: "bg-red-400"
+  }
+};
+
+// Define booking type
+interface Booking {
+  $id: string;
+  turfId: {
+    name: string;
+  };
+  date: string;
+  slots: string[];
+  status: BookingStatus;
+}
+
 export default function Bookings() {
   const { user, isDarkMode } = useGlobalContext();
   const [activeTab, setActiveTab] = useState('upcoming');
@@ -27,7 +64,7 @@ export default function Bookings() {
       .join('\n');
   };
 
-  const filterBookings = (bookings: any[] = []) => {
+  const filterBookings = (bookings: Booking[] = []) => {
     const now = new Date();
     // Reset time to midnight for accurate date comparison
     now.setHours(0, 0, 0, 0);
@@ -43,39 +80,53 @@ export default function Bookings() {
     });
   };
 
-  const renderBookings = (bookings: any[]) => {
-    return bookings.map((booking: any) => (
-      <View 
-        key={booking.$id} 
-        className={`mx-5 my-2 p-4 rounded-xl shadow-sm border ${
-          isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'
-        }`}
-      >
-        <Text className={`text-xl font-rubik-bold mb-2 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-          {booking.turfId?.name || "Unknown Turf"}
-        </Text>
-        <View className="flex-row items-center mb-3">
-          <View className={`h-2 w-2 rounded-full ${activeTab === 'upcoming' ? 'bg-green-500' : 'bg-gray-500'} mr-2`} />
-          <Text className={`text-sm font-rubik-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            {booking.date ? new Date(booking.date).toLocaleDateString("en-US", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            }) : "N/A"}
-          </Text>
+  const renderBookings = (bookings: Booking[]) => {
+    return bookings.map((booking) => {
+      const statusStyle = STATUS_COLORS[booking.status || 'Reserved'];
+
+      return (
+        <View 
+          key={booking.$id} 
+          className={`mx-5 my-2 p-4 rounded-xl shadow-sm border ${
+            isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'
+          }`}
+        >
+          <View className="flex-row justify-between items-start mb-2">
+            <Text className={`text-xl font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
+              {booking.turfId?.name || "Unknown Turf"}
+            </Text>
+            
+            {/* Status Badge */}
+            <View className={`px-3 py-1 rounded-full ${statusStyle.bg}`}>
+              <Text className={`text-xs font-rubik-bold ${statusStyle.text}`}>
+                {booking.status || 'Reserved'}
+              </Text>
+            </View>
+          </View>
+
+          <View className="flex-row items-center mb-3">
+            <View className={`h-2 w-2 rounded-full ${statusStyle.dot} mr-2`} />
+            <Text className={`text-sm font-rubik-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              {booking.date ? new Date(booking.date).toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              }) : "N/A"}
+            </Text>
+          </View>
+          
+          <View className="border-t border-gray-200 pt-3">
+            <Text className={`text-xs font-rubik mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+              Booked Slots
+            </Text>
+            <Text className={`text-sm font-rubik-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>
+              {booking.slots ? formatSlots(booking.slots) : "N/A"}
+            </Text>
+          </View>
         </View>
-        
-        <View className="border-t border-gray-200 pt-3">
-          <Text className={`text-xs font-rubik mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-            Booked Slots
-          </Text>
-          <Text className={`text-sm font-rubik-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>
-            {booking.slots ? formatSlots(booking.slots) : "N/A"}
-          </Text>
-        </View>
-      </View>
-    ));
+      );
+    });
   };
 
   return (
@@ -115,7 +166,6 @@ export default function Bookings() {
         </TouchableOpacity>
       </View>
 
-      {/* Loading State */}
       {loading ? (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#0061FF" />
