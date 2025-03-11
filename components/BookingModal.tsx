@@ -19,6 +19,7 @@ export const BookingModal = ({ visible, onClose, turfId, turfName }: BookingModa
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
   const [unavailableSlots, setUnavailableSlots] = useState<string[]>([]);
+  const [name, setName] = useState<string | null>(user?.name || null);
 
   useEffect(() => {
     if (date) {
@@ -81,7 +82,7 @@ export const BookingModal = ({ visible, onClose, turfId, turfName }: BookingModa
 
     try {
       setLoading(true);
-      await createBooking(user.$id, turfId, date, selectedSlots);
+      await createBooking(user.$id, turfId, date, selectedSlots, name);
       Alert.alert('Success', 'Slot(s) booked successfully!');
       onClose();
     } catch (error) {

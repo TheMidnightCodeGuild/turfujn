@@ -304,7 +304,7 @@ export async function checkSlotAvailability(turfId: string, date: Date, slotIds:
   }
 }
 
-export async function createBooking(userId: string, turfId: string, date: Date, slots: string[]) {
+export async function createBooking(userId: string, turfId: string, date: Date, slots: string[], name: string) {
   try {
     // First create the booking
     const booking = await databases.createDocument(
@@ -316,7 +316,8 @@ export async function createBooking(userId: string, turfId: string, date: Date, 
         turfId,
         date: date.toISOString(),
         slots,
-        status: "Reserved" // Set default status
+        status: "Reserved", // Set default status
+        name
       }
     );
 
