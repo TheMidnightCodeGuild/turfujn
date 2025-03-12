@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import { useAppwrite } from "@/lib/useAppwrite";
 import { getUserBookings } from "@/lib/appwrite";
@@ -52,10 +53,17 @@ interface Booking {
 export default function Bookings() {
   const { user, isDarkMode } = useGlobalContext();
   const [activeTab, setActiveTab] = useState('upcoming');
-  const { data: foundUser, loading } = useAppwrite({
+  const [refreshing, setRefreshing] = useState(false);
+  const { data: foundUser, loading, refetch } = useAppwrite({
     fn: () => getUserBookings(user?.$id!),
     skip: !user,
   });
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, [refetch]);
 
   const formatSlots = (slots: string[]) => {
     return slots
@@ -181,6 +189,14 @@ export default function Bookings() {
           className="flex-1 py-2" 
           contentContainerStyle={{ paddingBottom: 100 }}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#10B981']} // primary-300 color
+              tintColor={isDarkMode ? '#FFFFFF' : '#10B981'}
+            />
+          }
         >
           {renderBookings(filterBookings(foundUser.bookings))}
         </ScrollView>
