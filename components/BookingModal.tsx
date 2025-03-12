@@ -23,7 +23,7 @@ export const BookingModal = ({ visible, onClose, turfId, turfName }: BookingModa
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
   const [unavailableSlots, setUnavailableSlots] = useState<string[]>([]);
-  const [name, setName] = useState<string | null>(user?.name || null);
+  const [name, setName] = useState<string>(user?.name || '');
 
   useEffect(() => {
     if (date) {
