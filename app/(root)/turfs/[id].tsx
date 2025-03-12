@@ -10,8 +10,6 @@ import {
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 
-
-
 import icons from "@/constants/icon";
 import images from "@/constants/images";
 import Comment from "@/components/Comment";
@@ -21,9 +19,11 @@ import { useAppwrite } from "@/lib/useAppwrite";
 import { getTurfById } from "@/lib/appwrite";
 import { BookingModal } from "@/components/BookingModal";
 import { useState } from "react";
+import { useGlobalContext } from "@/lib/global-provider";
 
 const TurfDetails = () => {
   const { id } = useLocalSearchParams<{ id?: string }>();
+  const { isDarkMode } = useGlobalContext();
 
   const windowHeight = Dimensions.get("window").height;
 
@@ -37,10 +37,10 @@ const TurfDetails = () => {
   const [showBookingModal, setShowBookingModal] = useState(false);
 
   return (
-    <View>
+    <View className={isDarkMode ? 'bg-black' : 'bg-white'}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerClassName="pb-32 bg-white"
+        contentContainerClassName={`pb-32 ${isDarkMode ? 'bg-black' : 'bg-white'}`}
       >
         <View className="relative w-full" style={{ height: windowHeight / 2 }}>
           <Image
@@ -71,16 +71,20 @@ const TurfDetails = () => {
                 <Image
                   source={icons.heart}
                   className="size-7"
-                  tintColor={"black"}
+                  tintColor={isDarkMode ? "white" : "black"}
                 />
-                <Image source={icons.send} className="size-7" />
+                <Image 
+                  source={icons.send} 
+                  className="size-7"
+                  tintColor={isDarkMode ? "white" : "black"}
+                />
               </View>
             </View>
           </View>
         </View>
 
         <View className="px-5 mt-7 flex gap-2">
-          <Text className="text-2xl font-rubik-extrabold">
+          <Text className={`text-2xl font-rubik-extrabold ${isDarkMode ? 'text-white' : 'text-black'}`}>
             {turf?.name}
           </Text>
 
@@ -93,7 +97,7 @@ const TurfDetails = () => {
 
             <View className="flex flex-row items-center gap-2">
               <Image source={icons.star} className="size-5" />
-              <Text className="text-black-200 text-sm mt-1 font-rubik-medium">
+              <Text className={`text-sm mt-1 font-rubik-medium ${isDarkMode ? 'text-gray-300' : 'text-black-200'}`}>
                 {turf?.rating} ({turf?.reviews.length} reviews)
               </Text>
             </View>
@@ -103,19 +107,19 @@ const TurfDetails = () => {
             <View className="flex flex-row items-center justify-center bg-primary-100 rounded-full size-10">
               <Image source={icons.area} className="size-4" />
             </View>
-            <Text className="text-black-300 text-sm font-rubik-medium ml-2">
+            <Text className={`text-sm font-rubik-medium ml-2 ${isDarkMode ? 'text-gray-300' : 'text-black-300'}`}>
               {turf?.area} sqft
             </Text>
             <View className="flex flex-row items-center justify-center bg-primary-100 rounded-full size-10 ml-7">
               <Image source={icons.info} className="size-4" />
             </View>
-            <Text className="text-black-300 text-sm font-rubik-medium ml-2">
+            <Text className={`text-sm font-rubik-medium ml-2 ${isDarkMode ? 'text-gray-300' : 'text-black-300'}`}>
               {turf?.capacity} Players
             </Text>
           </View>
 
           <View className="w-full border-t border-primary-200 pt-7 mt-5">
-            <Text className="text-black-300 text-xl font-rubik-bold">
+            <Text className={`text-xl font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black-300'}`}>
               Owner
             </Text>
 
@@ -128,33 +132,41 @@ const TurfDetails = () => {
                 />
 
                 <View className="flex flex-col items-start justify-center ml-3">
-                  <Text className="text-lg text-black-300 text-start font-rubik-bold">
+                  <Text className={`text-lg text-start font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black-300'}`}>
                     {turf?.agent?.name}
                   </Text>
-                  <Text className="text-sm text-black-200 text-start font-rubik-medium">
+                  <Text className={`text-sm text-start font-rubik-medium ${isDarkMode ? 'text-gray-300' : 'text-black-200'}`}>
                     {turf?.agent?.email}
                   </Text>
                 </View>
               </View>
 
               <View className="flex flex-row items-center gap-3">
-                <Image source={icons.chat} className="size-7" />
-                <Image source={icons.phone} className="size-7" />
+                <Image 
+                  source={icons.chat} 
+                  className="size-7"
+                  tintColor={isDarkMode ? "white" : "black"}
+                />
+                <Image 
+                  source={icons.phone} 
+                  className="size-7"
+                  tintColor={isDarkMode ? "white" : "black"}
+                />
               </View>
             </View>
           </View>
 
           <View className="mt-7">
-            <Text className="text-black-300 text-xl font-rubik-bold">
+            <Text className={`text-xl font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black-300'}`}>
               Overview
             </Text>
-            <Text className="text-black-200 text-base font-rubik mt-2">
+            <Text className={`text-base font-rubik mt-2 ${isDarkMode ? 'text-gray-300' : 'text-black-200'}`}>
               {turf?.description}
             </Text>
           </View>
 
           <View className="mt-7">
-            <Text className="text-black-300 text-xl font-rubik-bold">
+            <Text className={`text-xl font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black-300'}`}>
               Amenities
             </Text>
 
@@ -180,7 +192,7 @@ const TurfDetails = () => {
                       <Text
                         numberOfLines={1}
                         ellipsizeMode="tail"
-                        className="text-black-300 text-sm text-center font-rubik mt-1.5"
+                        className={`text-sm text-center font-rubik mt-1.5 ${isDarkMode ? 'text-gray-300' : 'text-black-300'}`}
                       >
                         {item}
                       </Text>
@@ -193,7 +205,7 @@ const TurfDetails = () => {
 
           {turf?.gallery.length > 0 && (
             <View className="mt-7">
-              <Text className="text-black-300 text-xl font-rubik-bold">
+              <Text className={`text-xl font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black-300'}`}>
                 Gallery
               </Text>
               <FlatList
@@ -214,12 +226,16 @@ const TurfDetails = () => {
           )}
 
           <View className="mt-7">
-            <Text className="text-black-300 text-xl font-rubik-bold">
+            <Text className={`text-xl font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black-300'}`}>
               Location
             </Text>
             <View className="flex flex-row items-center justify-start mt-4 gap-2">
-              <Image source={icons.location} className="w-7 h-7" />
-              <Text className="text-black-200 text-sm font-rubik-medium">
+              <Image 
+                source={icons.location} 
+                className="w-7 h-7"
+                tintColor={isDarkMode ? "white" : "black"}
+              />
+              <Text className={`text-sm font-rubik-medium ${isDarkMode ? 'text-gray-300' : 'text-black-200'}`}>
                 {turf?.address}
               </Text>
             </View>
@@ -235,7 +251,7 @@ const TurfDetails = () => {
               <View className="flex flex-row items-center justify-between">
                 <View className="flex flex-row items-center">
                   <Image source={icons.star} className="size-6" />
-                  <Text className="text-black-300 text-xl font-rubik-bold ml-2">
+                  <Text className={`text-xl font-rubik-bold ml-2 ${isDarkMode ? 'text-white' : 'text-black-300'}`}>
                     {turf?.rating} ({turf?.reviews.length} reviews)
                   </Text>
                 </View>
@@ -255,10 +271,10 @@ const TurfDetails = () => {
         </View>
       </ScrollView>
 
-      <View className="absolute bg-white bottom-0 w-full rounded-t-2xl border-t border-r border-l border-primary-200 p-7">
+      <View className={`absolute bottom-0 w-full rounded-t-2xl border-t border-r border-l border-primary-200 p-7 ${isDarkMode ? 'bg-zinc-900' : 'bg-white'}`}>
         <View className="flex flex-row items-center justify-between gap-10">
           <View className="flex flex-col items-start">
-            <Text className="text-black-200 text-xs font-rubik-medium">
+            <Text className={`text-xs font-rubik-medium ${isDarkMode ? 'text-gray-300' : 'text-black-200'}`}>
               Price per hour
             </Text>
             <Text className="text-primary-300 text-start text-2xl font-rubik-bold">

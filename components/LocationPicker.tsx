@@ -10,6 +10,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import * as Location from "expo-location";
+import { useGlobalContext } from "@/lib/global-provider";
 
 // You can expand this list with more Indian cities
 const INDIAN_CITIES = [
@@ -31,6 +32,7 @@ export default function LocationPicker({
 }: { 
   onLocationSelect: (location: { latitude: number; longitude: number; city: string }) => void 
 }) {
+  const { isDarkMode } = useGlobalContext();
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredCities, setFilteredCities] = useState(INDIAN_CITIES);
@@ -90,11 +92,12 @@ export default function LocationPicker({
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className={`flex-1 ${isDarkMode ? 'bg-black' : 'bg-white'}`}>
       <View className="p-4">
         <TextInput
-          className="border border-gray-300 rounded-lg p-3 mb-4"
+          className={`border ${isDarkMode ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-300 bg-white text-black'} rounded-lg p-3 mb-4`}
           placeholder="Search cities..."
+          placeholderTextColor={isDarkMode ? '#9CA3AF' : '#6B7280'}
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
@@ -118,9 +121,9 @@ export default function LocationPicker({
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => handleCitySelect(item)}
-                className="py-3 border-b border-gray-200"
+                className={`py-3 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
               >
-                <Text className="text-base">{item}</Text>
+                <Text className={`text-base ${isDarkMode ? 'text-gray-300' : 'text-black'}`}>{item}</Text>
               </TouchableOpacity>
             )}
           />

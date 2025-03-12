@@ -8,8 +8,9 @@ import {
   Modal,
   Keyboard,
   Switch,
+  RefreshControl,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -34,10 +35,11 @@ const Home = () => {
     city: string;
   } | null>(null);
   const [showLocationPicker, setShowLocationPicker] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const params = useLocalSearchParams<{ query?: string; filter?: string }>();
 
-  const { data: latestturfs, loading: latestturfsLoading } =
+  const { data: latestturfs, loading: latestturfsLoading, refetch: refetchLatest } =
     useAppwrite({
       fn: getLatestTurfs,
     });
@@ -63,6 +65,19 @@ const Home = () => {
       limit: 6,
     });
   }, [params.filter, params.query]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([
+      // refetchLatest(),
+      refetch({
+        filter: params.filter!,
+        query: params.query!,
+        limit: 6,
+      })
+    ]);
+    setRefreshing(false);
+  }, []);
 
   const handleCardPress = (id: string) => router.push(`/turfs/${id}`);
 
@@ -91,6 +106,14 @@ const Home = () => {
         contentContainerClassName="pb-32"
         columnWrapperClassName="flex gap-5 px-5"
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#10B981']} // primary-300 color
+            tintColor={isDarkMode ? '#FFFFFF' : '#10B981'}
+          />
+        }
         ListEmptyComponent={
           loading ? (
             <ActivityIndicator size="large" className="text-primary-300 mt-5" />

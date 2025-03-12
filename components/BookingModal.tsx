@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, View, Text, TouchableOpacity, Alert, Pressable, ScrollView } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, Alert, Pressable, ScrollView, Platform, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { checkSlotAvailability, createBooking } from '@/lib/appwrite';
 import { useGlobalContext } from '@/lib/global-provider';
 import { TIME_SLOTS } from '@/constants/data';
+import { BlurView } from 'expo-blur';
 
 interface BookingModalProps {
   visible: boolean;
@@ -13,7 +14,7 @@ interface BookingModalProps {
 }
 
 export const BookingModal = ({ visible, onClose, turfId, turfName }: BookingModalProps) => {
-  const { user } = useGlobalContext();
+  const { user, isDarkMode } = useGlobalContext();
   const [loading, setLoading] = useState(false);
   const [date, setDate] = useState(() => {
     const today = new Date();
@@ -42,7 +43,9 @@ export const BookingModal = ({ visible, onClose, turfId, turfName }: BookingModa
   };
 
   const handleDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(false);
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false);
+    }
     if (selectedDate) {
       const newDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, 0, 0, 0);
       setDate(newDate);
@@ -103,90 +106,113 @@ export const BookingModal = ({ visible, onClose, turfId, turfName }: BookingModa
 
   return (
     <Modal visible={visible} transparent animationType="slide">
-      <View className="flex-1 justify-end bg-black/50">
-        <View className="bg-white rounded-t-3xl p-5">
-          <Text className="text-2xl font-rubik-bold text-black-300 mb-5">
-            Book {turfName}
-          </Text>
-
-          {/* Date Selection */}
-          <Pressable 
-            onPress={() => setShowDatePicker(true)}
-            className="mb-5 p-4 border border-primary-200 rounded-lg"
-          >
-            <Text className="text-base font-rubik-medium mb-1">Select Date</Text>
-            <Text className="text-lg text-black-300">
-              {date.toLocaleDateString()}
+      <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill}>
+        <View className="flex-1 justify-end">
+          <View className={`rounded-t-3xl p-5 ${isDarkMode ? 'bg-black' : 'bg-white'}`}>
+            <Text className={`text-2xl font-rubik-bold mb-5 ${isDarkMode ? 'text-white' : 'text-black-300'}`}>
+              Book {turfName}
             </Text>
-          </Pressable>
 
-          {/* Time Slots */}
-          <ScrollView className="max-h-[300px] mb-5">
-            <View className="flex-row flex-wrap gap-2">
-              {TIME_SLOTS.map(slot => {
-                const isSelected = selectedSlots.includes(slot.id);
-                const isDisabled = isSlotDisabled(slot);
-
-                return (
-                  <TouchableOpacity
-                    key={slot.id}
-                    onPress={() => !isDisabled && toggleSlot(slot.id)}
-                    className={`p-3 rounded-lg border ${
-                      isSelected 
-                        ? 'bg-primary-300 border-primary-300' 
-                        : isDisabled
-                          ? 'bg-gray-100 border-gray-200'
-                          : 'border-primary-200'
-                    }`}
-                    disabled={isDisabled}
-                  >
-                    <Text className={`text-sm ${
-                      isSelected 
-                        ? 'text-white font-rubik-bold'
-                        : isDisabled
-                          ? 'text-gray-400'
-                          : 'text-black-300'
-                    }`}>
-                      {slot.label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </ScrollView>
-
-          {/* Action Buttons */}
-          <View className="flex-row gap-4">
-            <TouchableOpacity 
-              onPress={onClose}
-              className="flex-1 py-4 bg-primary-100 rounded-full"
+            {/* Date Selection */}
+            <Pressable 
+              onPress={() => setShowDatePicker(true)}
+              className={`mb-5 p-4 border rounded-lg ${isDarkMode ? 'border-gray-700' : 'border-primary-200'}`}
             >
-              <Text className="text-center font-rubik-bold text-primary-300">Cancel</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              onPress={handleBooking}
-              disabled={loading}
-              className="flex-1 py-4 bg-primary-300 rounded-full"
-            >
-              <Text className="text-center font-rubik-bold text-white">
-                {loading ? 'Booking...' : 'Confirm Booking'}
+              <Text className={`text-base font-rubik-medium mb-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>Select Date</Text>
+              <Text className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-black-300'}`}>
+                {date.toLocaleDateString()}
               </Text>
-            </TouchableOpacity>
-          </View>
+            </Pressable>
 
-          {/* Date Picker */}
-          {showDatePicker && (
-            <DateTimePicker
-              value={date}
-              mode="date"
-              display="default"
-              onChange={handleDateChange}
-              minimumDate={new Date()}
-            />
-          )}
+            {/* Time Slots */}
+            <ScrollView className="max-h-[300px] mb-5">
+              <View className="flex-row flex-wrap gap-2">
+                {TIME_SLOTS.map(slot => {
+                  const isSelected = selectedSlots.includes(slot.id);
+                  const isDisabled = isSlotDisabled(slot);
+
+                  return (
+                    <TouchableOpacity
+                      key={slot.id}
+                      onPress={() => !isDisabled && toggleSlot(slot.id)}
+                      className={`p-3 rounded-lg border ${
+                        isSelected 
+                          ? 'bg-primary-300 border-primary-300' 
+                          : isDisabled
+                            ? `${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-100 border-gray-200'}`
+                            : `${isDarkMode ? 'border-gray-700' : 'border-primary-200'}`
+                      }`}
+                      disabled={isDisabled}
+                    >
+                      <Text className={`text-sm ${
+                        isSelected 
+                          ? 'text-white font-rubik-bold'
+                          : isDisabled
+                            ? 'text-gray-400'
+                            : isDarkMode ? 'text-gray-300' : 'text-black-300'
+                      }`}>
+                        {slot.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </ScrollView>
+
+            {/* Action Buttons */}
+            <View className="flex-row gap-4">
+              <TouchableOpacity 
+                onPress={onClose}
+                className={`flex-1 py-4 rounded-full ${isDarkMode ? 'bg-gray-800' : 'bg-primary-100'}`}
+              >
+                <Text className="text-center font-rubik-bold text-primary-300">Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                onPress={handleBooking}
+                disabled={loading}
+                className="flex-1 py-4 bg-primary-300 rounded-full"
+              >
+                <Text className="text-center font-rubik-bold text-white">
+                  {loading ? 'Booking...' : 'Confirm Booking'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Date Picker */}
+            {showDatePicker && (
+              <Modal
+                transparent={true}
+                animationType="slide"
+                visible={showDatePicker}
+              >
+                <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill}>
+                  <View className="flex-1 justify-end">
+                    <View className={`${isDarkMode ? 'bg-black' : 'bg-white'} p-4`}>
+                      <View className="flex-row justify-between items-center mb-4">
+                        <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+                          <Text className="text-primary-300 font-rubik-medium">Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+                          <Text className="text-primary-300 font-rubik-medium">Done</Text>
+                        </TouchableOpacity>
+                      </View>
+                      <DateTimePicker
+                        value={date}
+                        mode="date"
+                        display="spinner"
+                        onChange={handleDateChange}
+                        minimumDate={new Date()}
+                        textColor={isDarkMode ? '#FFFFFF' : '#000000'}
+                      />
+                    </View>
+                  </View>
+                </BlurView>
+              </Modal>
+            )}
+          </View>
         </View>
-      </View>
+      </BlurView>
     </Modal>
   );
-}; 
+};
