@@ -15,7 +15,11 @@ interface BookingModalProps {
 export const BookingModal = ({ visible, onClose, turfId, turfName }: BookingModalProps) => {
   const { user } = useGlobalContext();
   const [loading, setLoading] = useState(false);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  });
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
   const [unavailableSlots, setUnavailableSlots] = useState<string[]>([]);
@@ -29,7 +33,8 @@ export const BookingModal = ({ visible, onClose, turfId, turfName }: BookingModa
 
   const checkAvailability = async () => {
     try {
-      const result = await checkSlotAvailability(turfId, date, TIME_SLOTS.map(slot => slot.id));
+      const checkDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+      const result = await checkSlotAvailability(turfId, checkDate, TIME_SLOTS.map(slot => slot.id));
       setUnavailableSlots(result.unavailableSlots);
     } catch (error) {
       console.error('Error checking availability:', error);
@@ -39,7 +44,8 @@ export const BookingModal = ({ visible, onClose, turfId, turfName }: BookingModa
   const handleDateChange = (event: any, selectedDate?: Date) => {
     setShowDatePicker(false);
     if (selectedDate) {
-      setDate(selectedDate);
+      const newDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0, 0, 0, 0);
+      setDate(newDate);
       setSelectedSlots([]); // Reset selected slots when date changes
     }
   };
@@ -82,7 +88,10 @@ export const BookingModal = ({ visible, onClose, turfId, turfName }: BookingModa
 
     try {
       setLoading(true);
-      await createBooking(user.$id, turfId, date, selectedSlots, name);
+      // Create a new UTC date at midnight
+      const bookingDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0));
+      
+      await createBooking(user.$id, turfId, bookingDate, selectedSlots, name);
       Alert.alert('Success', 'Slot(s) booked successfully!');
       onClose();
     } catch (error) {
