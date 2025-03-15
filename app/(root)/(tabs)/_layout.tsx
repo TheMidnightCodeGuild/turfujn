@@ -41,7 +41,7 @@ const TabsLayout = () => {
       screenOptions={{
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: isDarkMode ? '#000' : 'white',
+          backgroundColor: isDarkMode ? "#000" : "white",
           position: "absolute",
           borderTopColor: isDarkMode ? "#333" : "#0061FF1A",
           borderTopWidth: 1,
@@ -55,7 +55,12 @@ const TabsLayout = () => {
           title: "Home",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.home} title="Home" isDarkMode={isDarkMode} />
+            <TabIcon
+              focused={focused}
+              icon={icons.home}
+              title="Home"
+              isDarkMode={isDarkMode}
+            />
           ),
         }}
       />
@@ -65,17 +70,27 @@ const TabsLayout = () => {
           title: "Explore",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.search} title="Explore" isDarkMode={isDarkMode} />
+            <TabIcon
+              focused={focused}
+              icon={icons.search}
+              title="Explore"
+              isDarkMode={isDarkMode}
+            />
           ),
         }}
       />
-       <Tabs.Screen
+      <Tabs.Screen
         name="tournament"
         options={{
           title: "Tournament",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.trophy} title="Tournament" isDarkMode={isDarkMode} />
+            <TabIcon
+              focused={focused}
+              icon={icons.trophy}
+              title="Tournament"
+              isDarkMode={isDarkMode}
+            />
           ),
         }}
       />
@@ -85,7 +100,12 @@ const TabsLayout = () => {
           title: "Bookings",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.booking} title="Bookings" isDarkMode={isDarkMode} />
+            <TabIcon
+              focused={focused}
+              icon={icons.booking}
+              title="Bookings"
+              isDarkMode={isDarkMode}
+            />
           ),
         }}
       />
@@ -95,7 +115,12 @@ const TabsLayout = () => {
           title: "Profile",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.person} title="Profile" isDarkMode={isDarkMode} />
+            <TabIcon
+              focused={focused}
+              icon={icons.person}
+              title="Profile"
+              isDarkMode={isDarkMode}
+            />
           ),
         }}
       />

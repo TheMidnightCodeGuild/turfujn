@@ -61,7 +61,7 @@ export default function Bookings() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await refetch();
+    await refetch({}); // Pass empty object as argument
     setRefreshing(false);
   }, [refetch]);
 

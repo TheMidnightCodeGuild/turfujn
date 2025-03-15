@@ -42,7 +42,7 @@ const Filters = () => {
           }`}
         >
           <Text
-            className={`text-sm ${
+            className={`text-sm  ₹{
               selectedCategory === item.category
                 ? "text-white font-rubik-bold mt-0.5"
                 : isDarkMode

@@ -15,7 +15,7 @@ export const FeaturedCard = ({ item, onPress }: Props) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      className="flex flex-col items-start w-[350px] h-80 relative"
+      className="flex flex-col items-start w-[390px] h-80 relative"
     >
       <Image source={{ uri: item.image }} className="size-full rounded-2xl" />
 
@@ -44,7 +44,7 @@ export const FeaturedCard = ({ item, onPress }: Props) => {
 
         <View className="flex flex-row items-center justify-between w-full">
           <Text className="text-xl font-rubik-extrabold text-white">
-            ${item.price}
+            ₹{item.price}
           </Text>
           <Image source={icons.heart} className="size-5" />
         </View>
@@ -58,7 +58,9 @@ export const Card = ({ item, onPress }: Props) => {
 
   return (
     <TouchableOpacity
-      className={`w-full mt-4 px-3 py-4 rounded-lg border-2 ${isDarkMode ? 'border-white/10 bg-black' : 'border-black/10 bg-white'}  relative`}
+      className={`w-full mt-4 px-3 py-4 rounded-lg border-2 ${
+        isDarkMode ? "border-white/10 bg-black" : "border-black/10 bg-white"
+      }  relative`}
       onPress={onPress}
     >
       <View className="flex flex-row items-center absolute px-2 top-5 right-5 bg-white/90 p-1 rounded-full z-50">
@@ -71,15 +73,27 @@ export const Card = ({ item, onPress }: Props) => {
       <Image source={{ uri: item.image }} className="w-full h-40 rounded-lg" />
 
       <View className="flex flex-col mt-2">
-        <Text className={`text-base font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black-300'}`}>
+        <Text
+          className={`text-base font-rubik-bold ${
+            isDarkMode ? "text-white" : "text-black-300"
+          }`}
+        >
           {item.name}
         </Text>
-        <Text className={`text-xs font-rubik ${isDarkMode ? 'text-white' : 'text-black-100'}`}>
+        <Text
+          className={`text-xs font-rubik ${
+            isDarkMode ? "text-white" : "text-black-100"
+          }`}
+        >
           {item.address}
         </Text>
 
         <View className="flex flex-row items-center justify-between mt-2">
-          <Text className={`text-base font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black-100'}`}>
+          <Text
+            className={`text-base font-rubik-bold ${
+              isDarkMode ? "text-white" : "text-black-100"
+            }`}
+          >
             ${item.price}
           </Text>
           <Image

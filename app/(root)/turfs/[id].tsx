@@ -141,18 +141,7 @@ const TurfDetails = () => {
                 </View>
               </View>
 
-              <View className="flex flex-row items-center gap-3">
-                <Image 
-                  source={icons.chat} 
-                  className="size-7"
-                  tintColor={isDarkMode ? "white" : "black"}
-                />
-                <Image 
-                  source={icons.phone} 
-                  className="size-7"
-                  tintColor={isDarkMode ? "white" : "black"}
-                />
-              </View>
+            
             </View>
           </View>
 
