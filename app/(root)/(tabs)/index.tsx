@@ -11,7 +11,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { useEffect, useState, useCallback } from "react";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, Redirect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import icons from "@/constants/icon";
@@ -28,7 +28,12 @@ import { getLatestTurfs, getTurfs } from "@/lib/appwrite";
 // import seed from "@/lib/seed";
 
 const Home = () => {
-  const { user, isDarkMode, toggleTheme } = useGlobalContext();
+  const { user, isDarkMode, toggleTheme, isLogged, loading: authLoading } = useGlobalContext();
+
+  if (!authLoading && !isLogged) {
+    return <Redirect href="/sign-in" />;
+  }
+
   const [selectedLocation, setSelectedLocation] = useState<{
     latitude: number;
     longitude: number;

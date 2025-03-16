@@ -94,7 +94,7 @@ export const Card = ({ item, onPress }: Props) => {
               isDarkMode ? "text-white" : "text-black-100"
             }`}
           >
-            ${item.price}
+            ₹{item.price}
           </Text>
           <Image
             source={icons.heart}

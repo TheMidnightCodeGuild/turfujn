@@ -114,7 +114,7 @@ const TurfDetails = () => {
               <Image source={icons.info} className="size-4" />
             </View>
             <Text className={`text-sm font-rubik-medium ml-2 ${isDarkMode ? 'text-gray-300' : 'text-black-300'}`}>
-              {turf?.capacity} Players
+              {turf?.players} Players
             </Text>
           </View>
 
@@ -267,7 +267,7 @@ const TurfDetails = () => {
               Price per hour
             </Text>
             <Text className="text-primary-300 text-start text-2xl font-rubik-bold">
-              ${turf?.price}
+            ₹{turf?.price}
             </Text>
           </View>
 
