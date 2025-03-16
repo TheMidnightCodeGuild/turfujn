@@ -30,8 +30,7 @@ export const config = {
 export const client = new Client();
 client
   .setEndpoint(config.endpoint!)
-  .setProject(config.projectId!)
-  .setPlatform(config.platform!);
+  .setProject(config.projectId!);
 
 export const avatar = new Avatars(client);
 export const account = new Account(client);
