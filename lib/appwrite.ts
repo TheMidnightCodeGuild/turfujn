@@ -13,7 +13,7 @@ import { openAuthSessionAsync } from "expo-web-browser";
 import { router } from "expo-router";
 
 export const config = {
-  platform: "com.ak.turfujn",
+  platform: "com.krethun.turfujn",
   endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
   projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
   databaseId: process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
