@@ -27,7 +27,7 @@
 
 // export default signIn;
 
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Alert,
@@ -36,9 +36,10 @@ import {
   Text,
   TouchableOpacity,
   View,
+  TextInput,
 } from "react-native";
 
-import { login } from "@/lib/appwrite";
+import { login, loginWithEmailPassword, createAccount } from "@/lib/appwrite";
 import { Redirect } from "expo-router";
 import { useGlobalContext } from "@/lib/global-provider";
 import icons from "@/constants/icon";
@@ -46,8 +47,27 @@ import images from "@/constants/images";
 
 const Auth = () => {
   const { refetch, loading, isLogged } = useGlobalContext();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [name, setName] = useState("");
 
   if (!loading && isLogged) return <Redirect href="/" />;
+
+  const handleEmailAuth = async () => {
+    let result;
+    if (isSignUp) {
+      result = await createAccount(email, password, name);
+    } else {
+      result = await loginWithEmailPassword(email, password);
+    }
+
+    if (result) {
+      refetch();
+    } else {
+      Alert.alert("Error", `Failed to ${isSignUp ? 'create account' : 'login'}`);
+    }
+  };
 
   const handleLogin = async () => {
     const result = await login();
@@ -67,39 +87,84 @@ const Auth = () => {
       >
         <Image
           source={images.onboarding}
-          className="w-full h-4/6"
+          className="w-full h-3/6"
           resizeMode="contain"
         />
 
         <View className="px-10">
-          <Text className="text-base text-center uppercase font-rubik text-black-200">
+          {/* <Text className="text-base text-center uppercase font-rubik text-black-200">
             Welcome To TurfUjn
-          </Text>
+          </Text> */}
 
-          <Text className="text-3xl font-rubik-bold text-black-300 text-center mt-2">
+          {/* <Text className="text-2xl font-rubik-bold text-black-300 text-center mt-2">
             Find and Book {"\n"}
             <Text className="text-primary-300">Your Perfect Turf</Text>
-          </Text>
+          </Text> */}
 
-          <Text className="text-lg font-rubik text-black-200 text-center mt-12">
-            Login to TurfUjn with Google
-          </Text>
-
-          <TouchableOpacity
-            onPress={handleLogin}
-            className="bg-white shadow-md shadow-zinc-300 rounded-full w-full py-4 mt-5"
-          >
-            <View className="flex flex-row items-center justify-center">
-              <Image
-                source={icons.google}
-                className="w-5 h-5"
-                resizeMode="contain"
+          <View className="mt-8">
+            {isSignUp && (
+              <TextInput
+                className="bg-gray-100 p-4 rounded-lg mb-3"
+                placeholder="Full Name"
+                value={name}
+                onChangeText={setName}
               />
-              <Text className="text-lg font-rubik-medium text-black-300 ml-2">
-                Continue with Google
+            )}
+            
+            <TextInput
+              className="bg-gray-100 p-4 rounded-lg mb-3"
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            
+            <TextInput
+              className="bg-gray-100 p-4 rounded-lg mb-3"
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+
+            <TouchableOpacity
+              onPress={handleEmailAuth}
+              className="bg-primary-300 rounded-lg w-full py-4 mb-3"
+            >
+              <Text className="text-white text-center font-rubik-medium text-lg">
+                {isSignUp ? 'Sign Up' : 'Login'}
               </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => setIsSignUp(!isSignUp)}>
+              <Text className="text-center text-primary-300">
+                {isSignUp ? 'Already have an account? Login' : "Don't have an account? Sign Up"}
+              </Text>
+            </TouchableOpacity>
+
+            <View className="flex-row items-center my-4">
+              <View className="flex-1 h-0.5 bg-gray-200" />
+              <Text className="mx-4 text-gray-500">OR</Text>
+              <View className="flex-1 h-0.5 bg-gray-200" />
             </View>
-          </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleLogin}
+              className="bg-white shadow-md shadow-zinc-300 rounded-full w-full py-4"
+            >
+              <View className="flex flex-row items-center justify-center">
+                <Image
+                  source={icons.google}
+                  className="w-5 h-5"
+                  resizeMode="contain"
+                />
+                <Text className="text-lg font-rubik-medium text-black-300 ml-2">
+                  Continue with Google
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
