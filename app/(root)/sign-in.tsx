@@ -44,6 +44,7 @@ import { Redirect } from "expo-router";
 import { useGlobalContext } from "@/lib/global-provider";
 import icons from "@/constants/icon";
 import images from "@/constants/images";
+import * as Linking from "expo-linking";
 
 const Auth = () => {
   const { refetch, loading, isLogged } = useGlobalContext();
@@ -70,11 +71,26 @@ const Auth = () => {
   };
 
   const handleLogin = async () => {
-    const result = await login();
-    if (result) {
-      refetch();
-    } else {
-      Alert.alert("Error", "Failed to login");
+    try {
+      // Get the redirect URI before calling login
+      const redirectUri = Linking.createURL("", {
+        scheme: "turfujn"
+      });
+      
+      const result = await login();
+      if (result) {
+        refetch();
+      } else {
+        Alert.alert(
+          "Error", 
+          `Failed to login\nRedirect URI: ${redirectUri}\nPlease add this URI to Appwrite OAuth settings`
+        );
+      }
+    } catch (error) {
+      Alert.alert(
+        "Error Details", 
+        `Error: ${error instanceof Error ? error.message : 'An unknown error occurred'}\nRedirect URI: ${Linking.createURL("", { scheme: "turfujn" })}`
+      );
     }
   };
 
