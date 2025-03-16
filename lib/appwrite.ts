@@ -40,9 +40,7 @@ export const databases = new Databases(client);
 export const storage = new Storage(client);
 
 export async function login() {
-  const redirectUri = Linking.createURL("", {
-    scheme: "turfujn"
-  });
+  const redirectUri = "https://turfujn.noxalgo.com/v1/account/sessions/oauth2/callback/google/67b6cad500181f4b1636"
 
   try {
     // Verify required environment variables
