@@ -56,8 +56,10 @@ export async function login() {
       // No active session, proceed with login
     }
 
-    const redirectUri = Linking.createURL("/");
-console.log(redirectUri);
+    const redirectUri = Linking.createURL("", {
+      scheme: "turfujn"
+    });
+    console.log("Redirect URI:", redirectUri);
 
     // Create OAuth2 token with better error handling
     let response;
@@ -72,6 +74,7 @@ console.log(redirectUri);
     }
 
     if (!response) throw new Error("OAuth token creation failed - no response");
+console.log(redirectUri);
 
     // Handle browser session
     const browserResult = await openAuthSessionAsync(
