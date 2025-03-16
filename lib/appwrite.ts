@@ -7,7 +7,7 @@ import {
   Avatars,
   Query,
   Storage,
-} from "react-native-appwrite";
+} from "appwrite";
 import * as Linking from "expo-linking";
 import { openAuthSessionAsync } from "expo-web-browser";
 import { router } from "expo-router";
@@ -30,8 +30,8 @@ export const config = {
 export const client = new Client();
 client
   .setEndpoint(config.endpoint!)
-  .setProject(config.projectId!)
-  .setPlatform(config.platform!);
+  .setProject(config.projectId!);
+  // .setPlatform(config.platform!);
 
 export const avatar = new Avatars(client);
 export const account = new Account(client);
@@ -57,6 +57,7 @@ export async function login() {
     }
 
     const redirectUri = Linking.createURL("/");
+console.log(redirectUri);
 
     // Create OAuth2 token with better error handling
     let response;
