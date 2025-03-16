@@ -114,6 +114,8 @@ const Profile = () => {
         <View className="flex flex-col mt-10">
           <SettingsItem icon={icons.calendar} title="My Bookings" />
           <SettingsItem icon={icons.wallet} title="Payments" />
+          <SettingsItem icon={icons.person} title="Create Teams" onPress={() => router.push('/create-team')}/>
+          <SettingsItem icon={icons.person} title="View Teams" onPress={() => router.push('/view-teams')}/>
         </View>
 
         <View className="flex flex-col mt-5 border-t pt-5 border-primary-200">

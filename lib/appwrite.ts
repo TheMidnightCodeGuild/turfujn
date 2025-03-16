@@ -24,6 +24,7 @@ export const config = {
   bucketId: process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID,
   usersCollectionId: process.env.EXPO_PUBLIC_APPWRITE_USERS_COLLECTION_ID,
   bookingsCollectionId: process.env.EXPO_PUBLIC_APPWRITE_BOOKINGS_COLLECTION_ID,
+  matchesCollectionId: process.env.EXPO_PUBLIC_APPWRITE_CRICKET_TEAMS_COLLECTION_ID,
 };
 
 export const client = new Client();
