@@ -73,10 +73,11 @@ const Auth = () => {
   const handleLogin = async () => {
     try {
       // Get the redirect URI before calling login
-      const redirectUri = Linking.createURL("", {
-        scheme: "turfujn"
-      });
+      // const redirectUri = Linking.createURL("", {
+      //   scheme: "turfujn"
+      // });
       
+      const redirectUri = Linking.createURL("/");
       const result = await login();
       if (result) {
         refetch();

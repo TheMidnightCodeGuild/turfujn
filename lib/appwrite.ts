@@ -379,3 +379,102 @@ export async function getUserBookings(userId: string) {
     throw error;
   }
 }
+
+export async function loginWithEmailPassword(email: string, password: string) {
+  try {
+    // Check if there's an active session first
+    try {
+      const currentSession = await account.getSession('current');
+      if (currentSession) {
+        await account.deleteSession('current');
+      }
+    } catch (e) {
+      // No active session, proceed with login
+    }
+
+    // Attempt to login with email/password
+    const session = await account.createSession(email, password);
+    
+    if (!session) throw new Error("Session creation failed");
+
+    // Get authenticated user details
+    const authenticatedUser = await account.get();
+    
+    // Check if user exists in our database
+    const existingUser = await databases.listDocuments(
+      config.databaseId!,
+      config.usersCollectionId!,
+      [Query.equal("userId", authenticatedUser.$id)]
+    );
+
+    if (existingUser.total === 0) {
+      // First time user - Create profile
+      await databases.createDocument(
+        config.databaseId!,
+        config.usersCollectionId!,
+        ID.unique(),
+        {
+          userId: authenticatedUser.$id,
+          name: authenticatedUser.name,
+          email: authenticatedUser.email,
+          avatar: avatar.getInitials(authenticatedUser.name).toString(),
+          bookings: []
+        }
+      );
+    } else {
+      // Update last login time for existing user
+      const userDoc = existingUser.documents[0];
+      await databases.updateDocument(
+        config.databaseId!,
+        config.usersCollectionId!,
+        userDoc.$id,
+        {
+          lastLoginAt: new Date().toISOString(),
+        }
+      );
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Email login failed:", error);
+    return false;
+  }
+}
+
+export async function createAccount(email: string, password: string, name: string) {
+  try {
+    // Create the account
+    const user = await account.create(
+      ID.unique(),
+      email,
+      password,
+      name
+    );
+
+    if (!user) throw new Error("Account creation failed");
+
+    // Automatically login after account creation
+    const session = await account.createSession(email, password);
+    
+    if (!session) throw new Error("Session creation failed");
+
+    // Create user profile in database
+    await databases.createDocument(
+      config.databaseId!,
+      config.usersCollectionId!,
+      ID.unique(),
+      {
+        userId: user.$id,
+        name: name,
+        email: email,
+        avatar: avatar.getInitials(name).toString(),
+        bookings: []
+      }
+    );
+
+    return true;
+  } catch (error) {
+    console.error("Account creation failed:", error);
+    return false;
+  }
+}
