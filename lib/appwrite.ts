@@ -10,7 +10,7 @@ import {
   AppwriteException,
 } from "appwrite";
 import * as Linking from "expo-linking";
-import { openAuthSessionAsync } from "expo-web-browser";
+import { openAuthSessionAsync, WebBrowserResultType } from "expo-web-browser";
 import { router } from "expo-router";
 import { Alert } from "react-native";
 
@@ -28,11 +28,10 @@ export const config = {
   bookingsCollectionId: process.env.EXPO_PUBLIC_APPWRITE_BOOKINGS_COLLECTION_ID,
   matchesCollectionId: process.env.EXPO_PUBLIC_APPWRITE_CRICKET_TEAMS_COLLECTION_ID,
 };
-
 export const client = new Client();
 client
   .setEndpoint(config.endpoint!)
-  .setProject(config.projectId!);
+  .setProject(config.projectId!)
 
 export const avatar = new Avatars(client);
 export const account = new Account(client);
@@ -40,8 +39,6 @@ export const databases = new Databases(client);
 export const storage = new Storage(client);
 
 export async function login() {
-  const redirectUri = "https://turfujn.noxalgo.com"
-
   try {
     // Verify required environment variables
     if (!config.endpoint || !config.projectId || !config.databaseId || !config.usersCollectionId) {
@@ -59,13 +56,7 @@ export async function login() {
       // No active session, proceed with login
     }
 
-    console.log("=== Debug Redirect URI ===");
-    console.log("Redirect URI:", redirectUri);
-    console.log("URI Components:", {
-      scheme: "turfujn",
-      host: new URL(redirectUri).host,
-      fullUrl: redirectUri
-    });
+    const redirectUri = Linking.createURL("/");
 
     // Create OAuth2 token with better error handling
     let response;
@@ -80,7 +71,6 @@ export async function login() {
     }
 
     if (!response) throw new Error("OAuth token creation failed - no response");
-    console.log(redirectUri);
 
     // Handle browser session
     const browserResult = await openAuthSessionAsync(
@@ -162,26 +152,7 @@ export async function login() {
     }
 
   } catch (error) {
-    // Detailed error logging
-    console.error("=== Login Error Details ===");
-    if (error instanceof AppwriteException) {
-      console.error("Error message:", error.message);
-      console.error("Error code:", error.code);
-      console.error("Error type:", error.type);
-      console.error("Full error:", JSON.stringify(error, null, 2));
-      
-      Alert.alert(
-        "Debug Info",
-        `Redirect URI: ${redirectUri}\nError: ${error.message}`
-      );
-    } else {
-      console.error("Unknown error:", error);
-      Alert.alert(
-        "Debug Info",
-        `Redirect URI: ${redirectUri}\nError: An unknown error occurred`
-      );
-    }
-    
+    console.error("Login process failed:", error);
     return false;
   }
 }
@@ -406,78 +377,5 @@ export async function getUserBookings(userId: string) {
   } catch (error) {
     console.error("Error fetching user:", error);
     throw error;
-  }
-}
-
-export async function loginWithEmailPassword(email: string, password: string) {
-  try {
-    // Check if there's an active session first
-    try {
-      const currentSession = await account.getSession('current');
-      if (currentSession) {
-        await account.deleteSession('current');
-      }
-    } catch (e) {
-      // No active session, proceed with login
-    }
-
-    const session = await account.createSession(email, password);
-    if (!session) throw new Error("Session creation failed");
-
-    // Get authenticated user details
-    const authenticatedUser = await account.get();
-    
-    // Check if user exists in database
-    const existingUser = await databases.listDocuments(
-      config.databaseId!,
-      config.usersCollectionId!,
-      [Query.equal("userId", authenticatedUser.$id)]
-    );
-
-    if (existingUser.total === 0) {
-      // Create new user profile
-      await databases.createDocument(
-        config.databaseId!,
-        config.usersCollectionId!,
-        ID.unique(),
-        {
-          userId: authenticatedUser.$id,
-          name: authenticatedUser.name,
-          email: authenticatedUser.email,
-          avatar: avatar.getInitials(authenticatedUser.name).toString(),
-          bookings: []
-        }
-      );
-    } else {
-      // Update last login time
-      const userDoc = existingUser.documents[0];
-      await databases.updateDocument(
-        config.databaseId!,
-        config.usersCollectionId!,
-        userDoc.$id,
-        {
-          lastLoginAt: new Date().toISOString(),
-        }
-      );
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Email/password login failed:", error);
-    return false;
-  }
-}
-
-export async function createAccount(email: string, password: string, name: string) {
-  try {
-    const user = await account.create(ID.unique(), email, password, name);
-    if (user) {
-      // Automatically log in after account creation
-      return await loginWithEmailPassword(email, password);
-    }
-    return false;
-  } catch (error) {
-    console.error("Account creation failed:", error);
-    return false;
   }
 }
