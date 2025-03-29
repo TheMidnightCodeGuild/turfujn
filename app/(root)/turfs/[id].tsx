@@ -166,15 +166,30 @@ const TurfDetails = () => {
                     (amenity) => amenity.title === item
                   );
 
+                  let iconSource = icons.info;
+                  if (item === "Wifi") iconSource = icons.wifi;
+                  else if (item === "Washroom") iconSource = icons.washroom;
+                  else if (item === "Changing-Room") iconSource = icons.changingRoom;
+                  else if (item === "Free-Parking") iconSource = icons.freeParking;
+                  else if (item === "Cricket-Kit") iconSource = icons.cricketKit;
+                  else if (item === "Stumps-Provided") iconSource = icons.stumpsProvided;
+                  else if (item === "Balls") iconSource = icons.balls;
+                  else if (item === "UPI-Accepted") iconSource = icons.upiAccepted;
+                  else if (item === "Nets") iconSource = icons.nets;
+                  else if (item === "Pet-Friendly") iconSource = icons.dog;
+                  else if (item === "Cafe") iconSource = icons.cafe;
+                  else if (item === "CCTV") iconSource = icons.cctv;
+       
+
                   return (
                     <View
                       key={index}
-                      className="flex flex-1 flex-col items-center min-w-16 max-w-20"
+                      className="flex flex-1 flex-col items-center min-w-16 max-w-28"
                     >
                       <View className="size-14 bg-primary-100 rounded-full flex items-center justify-center">
                         <Image
-                          source={amenity ? amenity.icon : icons.info}
-                          className="size-6"
+                          source={iconSource}
+                          className="size-14"
                         />
                       </View>
 

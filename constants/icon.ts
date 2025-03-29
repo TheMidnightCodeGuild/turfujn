@@ -24,17 +24,36 @@ import dog from "@/assets/icons/dog.png";
 import dumbell from "@/assets/icons/dumbell.png";
 import laundry from "@/assets/icons/laundry.png";
 import run from "@/assets/icons/run.png";
-
+import upiAccepted from "@/assets/icons/upiAccepted.png";
 import wifi from "@/assets/icons/wifi.png";
 import location from "@/assets/icons/location.png";
 import edit from "@/assets/icons/edit.png";
 import booking from "@/assets/icons/booking.png";
 import trophy from "@/assets/icons/trophy.png";
 import washroom from "@/assets/icons/washroom.png";
-// import upi-accepted from "@/assets/icons/upi-accepted.png";
-
+import sun from "@/assets/icons/sun.png";
+import moon from "@/assets/icons/moon.png";
+import balls from "@/assets/icons/balls.png";
+import nets from "@/assets/icons/nets.png";
+import changingRoom from "@/assets/icons/changingRoom.png";
+import cricketKit from "@/assets/icons/cricketKit.png";
+import stumpsProvided from "@/assets/icons/stumpsProvided.png";
+import cctv from "@/assets/icons/cctv.png";
+import cafe from "@/assets/icons/cafe.png";
+import freeParking from "@/assets/icons/freeParking.png";
 export default {
   google,
+  washroom,
+  balls,
+  nets,
+  changingRoom,
+  cricketKit,
+  stumpsProvided,
+  freeParking,
+  wifi,
+  dog,
+  cctv,
+  cafe,
   home,
   search,
   person,
@@ -52,20 +71,20 @@ export default {
   wallet,
   rightArrow,
   send,
-
   area,
   chat,
   phone,
- 
   cutlery,
-  dog,
+
   dumbell,
   laundry,
   run,
 
-  wifi,
   location,
   edit,
   booking,
-  trophy
-  };
+  trophy,
+  sun,
+  moon,
+  upiAccepted
+};

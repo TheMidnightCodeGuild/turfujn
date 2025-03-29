@@ -6,10 +6,10 @@ export const amenities = [
     title: "Changing Room",
     icon: icons.laundry,
   },
-  {
-    title: "Parking",
-    icon: icons.carPark,
-  },
+  // {
+  //   title: "Parking",
+  //   icon: icons.carPark,
+  // },
   {
     title: "Training Equipment",
     icon: icons.run,
@@ -22,10 +22,10 @@ export const amenities = [
     title: "Gym",
     icon: icons.dumbell,
   },
-  {
-    title: "Water Cooler",
-    icon: icons.swim,
-  },
+  // {
+  //   title: "Water Cooler",
+  //   icon: icons.swim,
+  // },
   {
     title: "Wifi",
     icon: icons.wifi,

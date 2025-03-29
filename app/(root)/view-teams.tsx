@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, SafeAreaView } from 'react-native';
 import { account, databases, config } from '../../lib/appwrite';
 import { Query } from 'appwrite';
+import { useGlobalContext } from '@/lib/global-provider';
+import icons from '@/constants/icon';
 
 interface Match {
   $id: string;
@@ -20,6 +22,7 @@ interface Match {
 export default function ViewTeams() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [expandedMatchId, setExpandedMatchId] = useState<string | null>(null);
+  const { isDarkMode } = useGlobalContext();
 
   useEffect(() => {
     fetchUserMatches();
@@ -27,7 +30,6 @@ export default function ViewTeams() {
 
   const fetchUserMatches = async () => {
     try {
-      // Get current user
       const currentUser = await account.get();
       const userDocs = await databases.listDocuments(
         config.databaseId!,
@@ -40,10 +42,9 @@ export default function ViewTeams() {
       }
 
       const user = userDocs.documents[0];
-      // Fetch matches for the current user
       const matchDocs = await databases.listDocuments(
         config.databaseId!,
-        config.matchesCollectionId!, // Make sure this is defined in your config
+        config.matchesCollectionId!,
         [Query.equal("user", user.$id)]
       );
 
@@ -65,7 +66,6 @@ export default function ViewTeams() {
         updatedMatch.OpPlayersScore[playerIndex] += scoreToAdd;
       }
 
-      // Update in Appwrite database
       await databases.updateDocument(
         config.databaseId!,
         config.matchesCollectionId!,
@@ -75,7 +75,6 @@ export default function ViewTeams() {
           : { OpPlayersScore: updatedMatch.OpPlayersScore }
       );
 
-      // Update local state
       setMatches(matches.map(m => m.$id === matchId ? updatedMatch : m));
     } catch (error) {
       console.error('Error updating score:', error);
@@ -94,7 +93,6 @@ export default function ViewTeams() {
         updatedMatch.OpPlayersWickets[playerIndex] += 1;
       }
 
-      // Update in Appwrite database
       await databases.updateDocument(
         config.databaseId!,
         config.matchesCollectionId!,
@@ -104,7 +102,6 @@ export default function ViewTeams() {
           : { OpPlayersWickets: updatedMatch.OpPlayersWickets }
       );
 
-      // Update local state
       setMatches(matches.map(m => m.$id === matchId ? updatedMatch : m));
     } catch (error) {
       console.error('Error updating wickets:', error);
@@ -116,10 +113,10 @@ export default function ViewTeams() {
       {[1, 2, 3, 4, 5, 6].map((score) => (
         <TouchableOpacity
           key={score}
-          className="bg-blue-500 px-2 py-1 rounded"
+          className="bg-primary-800 px-3 py-1.5 rounded-full"
           onPress={() => onPress(score)}
         >
-          <Text className="text-white text-xs">+{score}</Text>
+          <Text className="text-white text-xs font-rubik-medium">+{score}</Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -133,23 +130,37 @@ export default function ViewTeams() {
     scores: number[],
     wickets: number[]
   ) => (
-    <View className="mb-6 p-4 bg-white rounded-lg shadow">
-      <Text className="text-xl font-bold mb-4">{teamName}</Text>
+    <View className={`mb-6 p-4 rounded-xl ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+      <Text className={`text-xl font-rubik-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+        {teamName}
+      </Text>
       {players.map((player, index) => (
-        <View key={index} className="mb-4 p-2 border border-gray-200 rounded">
-          <Text className="font-bold">{player || `Player ${index + 1}`}</Text>
-          <View className="flex-row justify-between items-center mt-2">
-            <View>
-              <Text>Score: {scores[index]}</Text>
+        <View key={index} className={`mb-4 p-4 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
+          <Text className={`font-rubik-bold text-lg ${isDarkMode ? 'text-white' : 'text-black'}`}>
+            {player || `Player ${index + 1}`}
+          </Text>
+          <View className="flex-row justify-between items-center mt-4">
+            <View className="flex-1">
+              <View className="flex-row items-center mb-2">
+                <Image source={icons.trophy} className="w-5 h-5 mr-2" tintColor={isDarkMode ? '#fff' : '#000'} />
+                <Text className={`font-rubik-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Score: {scores[index]}
+                </Text>
+              </View>
               <ScoreButtons onPress={(score) => updateScore(matchId, teamType, index, score)} />
             </View>
-            <View>
-              <Text>Wickets: {wickets[index]}</Text>
+            <View className="ml-4">
+              <View className="flex-row items-center mb-2">
+                <Image source={icons.stumpsProvided} className="w-5 h-5 mr-2" tintColor={isDarkMode ? '#fff' : '#000'} />
+                <Text className={`font-rubik-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Wickets: {wickets[index]}
+                </Text>
+              </View>
               <TouchableOpacity
-                className="bg-green-500 px-3 py-1 rounded mt-1"
+                className="bg-primary-800 px-4 py-2 rounded-full"
                 onPress={() => updateWicket(matchId, teamType, index)}
               >
-                <Text className="text-white">+1</Text>
+                <Text className="text-white font-rubik-medium text-center">+1</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -159,62 +170,72 @@ export default function ViewTeams() {
   );
 
   return (
-    <ScrollView className="flex-1 bg-gray-100 p-4">
-      <Text className="text-2xl font-bold mb-4">My Matches</Text>
+    <SafeAreaView className={`flex-1 ${isDarkMode ? 'bg-black' : 'bg-gray-100'}`}>
+      <ScrollView className="flex-1 px-4">
+        <Text className={`text-2xl font-rubik-bold my-6 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+          My Matches
+        </Text>
 
-      {matches.map(match => (
-        <View key={match.$id} className="mb-4">
-          <TouchableOpacity
-            className="bg-white p-4 rounded-lg shadow"
-            onPress={() => setExpandedMatchId(expandedMatchId === match.$id ? null : match.$id)}
-          >
-            <View className="flex-row justify-between items-center">
-              <Text className="text-lg font-bold">{match.MatchName}</Text>
-              <Text className="text-blue-500">
-                {expandedMatchId === match.$id ? '▼' : '▶'}
-              </Text>
-            </View>
-            
-            {/* Show summary when collapsed */}
-            {expandedMatchId !== match.$id && (
-              <View className="mt-2">
-                <Text>{match.MyTeamName} vs {match.OpTeamName}</Text>
-                <Text className="text-gray-600">
-                  Total Score: {match.MyPlayersScore.reduce((a, b) => a + b, 0)} - {match.OpPlayersScore.reduce((a, b) => a + b, 0)}
+        {matches.map(match => (
+          <View key={match.$id} className="mb-4">
+            <TouchableOpacity
+              className={`p-4 rounded-xl ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
+              onPress={() => setExpandedMatchId(expandedMatchId === match.$id ? null : match.$id)}
+            >
+              <View className="flex-row justify-between items-center">
+                <Text className={`text-lg font-rubik-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                  {match.MatchName}
                 </Text>
+                <Image 
+                  source={icons.rightArrow} 
+                  className={`w-5 h-5 ${expandedMatchId === match.$id ? 'rotate-90' : ''}`}
+                  tintColor={isDarkMode ? '#fff' : '#000'}
+                />
+              </View>
+              
+              {expandedMatchId !== match.$id && (
+                <View className="mt-3">
+                  <Text className={`font-rubik-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                    {match.MyTeamName} vs {match.OpTeamName}
+                  </Text>
+                  <Text className={`font-rubik mt-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Total Score: {match.MyPlayersScore.reduce((a, b) => a + b, 0)} - {match.OpPlayersScore.reduce((a, b) => a + b, 0)}
+                  </Text>
+                </View>
+              )}
+            </TouchableOpacity>
+
+            {expandedMatchId === match.$id && (
+              <View className="mt-2">
+                {renderTeamSection(
+                  match.$id,
+                  'my',
+                  match.MyTeamName,
+                  match.MyPlayersName,
+                  match.MyPlayersScore,
+                  match.MyPlayersWicket
+                )}
+                {renderTeamSection(
+                  match.$id,
+                  'opponent',
+                  match.OpTeamName,
+                  match.OpPlayersName,
+                  match.OpPlayersScore,
+                  match.OpPlayersWickets
+                )}
               </View>
             )}
-          </TouchableOpacity>
+          </View>
+        ))}
 
-          {/* Expanded view */}
-          {expandedMatchId === match.$id && (
-            <View className="mt-2">
-              {renderTeamSection(
-                match.$id,
-                'my',
-                match.MyTeamName,
-                match.MyPlayersName,
-                match.MyPlayersScore,
-                match.MyPlayersWicket
-              )}
-              {renderTeamSection(
-                match.$id,
-                'opponent',
-                match.OpTeamName,
-                match.OpPlayersName,
-                match.OpPlayersScore,
-                match.OpPlayersWickets
-              )}
-            </View>
-          )}
-        </View>
-      ))}
-
-      {matches.length === 0 && (
-        <View className="flex-1 justify-center items-center p-8">
-          <Text className="text-gray-500">No matches found</Text>
-        </View>
-      )}
-    </ScrollView>
+        {matches.length === 0 && (
+          <View className="flex-1 justify-center items-center p-8">
+            <Text className={`text-lg font-rubik-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+              No matches found
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }

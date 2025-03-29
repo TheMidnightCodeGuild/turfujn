@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import { router } from 'expo-router';
-import { account, databases } from '../../lib/appwrite'; // Add databases import
-import { ID, Query } from 'appwrite'; // Add ID import for document creation
+import { account, databases } from '../../lib/appwrite';
+import { ID, Query } from 'appwrite';
 import { config } from '../../lib/appwrite';
+import { useGlobalContext } from '@/lib/global-provider';
+
 interface Team {
   name: string;
   players: string[];
 }
 
 export default function CreateTeam() {
+  const { isDarkMode } = useGlobalContext();
   const [matchName, setMatchName] = useState('');
   const [myTeam, setMyTeam] = useState<Team>({
     name: '',
@@ -34,7 +37,6 @@ export default function CreateTeam() {
 
   const handleSubmit = async () => {
     try {
-      // Get current user
       const currentUser = await account.get();
       const userDocs = await databases.listDocuments(
         config.databaseId!,
@@ -47,7 +49,6 @@ export default function CreateTeam() {
       }
 
       const user = userDocs.documents[0];
-      console.log("Found user ID:", user.$id);
       
       const matchData = {
         user: user.$id,
@@ -62,7 +63,6 @@ export default function CreateTeam() {
         OpPlayersWickets: Array(11).fill(0)
       };
       
-      // Save to Appwrite database
       await databases.createDocument(
         config.databaseId!,
         config.matchesCollectionId!,
@@ -73,27 +73,36 @@ export default function CreateTeam() {
       router.push('/view-teams');
     } catch (error) {
       console.error('Error saving match:', error);
-      // Optionally add some user feedback here
       alert('Failed to save match. Please try again.');
     }
   };
 
   const renderTeamSection = (teamType: 'my' | 'opponent', team: Team, setTeamName: (name: string) => void) => (
-    <View className="mb-6 p-4 bg-white rounded-lg shadow">
-      <Text className="text-xl font-bold mb-4">
+    <View className={`mb-6 p-4 rounded-xl ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+      <Text className={`text-xl font-rubik-bold mb-4 ${isDarkMode ? 'text-white' : 'text-black'}`}>
         {teamType === 'my' ? 'My Team' : 'Opponent Team'}
       </Text>
       <TextInput
-        className="border border-gray-300 rounded-md p-2 mb-4"
+        className={`border rounded-xl p-3 mb-4 font-rubik ${
+          isDarkMode 
+            ? 'bg-gray-800 border-gray-700 text-white' 
+            : 'bg-gray-50 border-gray-200 text-black'
+        }`}
         placeholder="Team Name"
+        placeholderTextColor={isDarkMode ? '#9ca3af' : '#6b7280'}
         value={team.name}
         onChangeText={setTeamName}
       />
       {team.players.map((player, index) => (
-        <View key={index} className="mb-2">
+        <View key={index} className="mb-3">
           <TextInput
-            className="border border-gray-300 rounded-md p-2"
+            className={`border rounded-xl p-3 font-rubik ${
+              isDarkMode 
+                ? 'bg-gray-800 border-gray-700 text-white' 
+                : 'bg-gray-50 border-gray-200 text-black'
+            }`}
             placeholder={`Player ${index + 1}`}
+            placeholderTextColor={isDarkMode ? '#9ca3af' : '#6b7280'}
             value={player}
             onChangeText={(text) => updatePlayerName(teamType === 'my' ? 'my' : 'opponent', index, text)}
           />
@@ -103,25 +112,34 @@ export default function CreateTeam() {
   );
 
   return (
-    <ScrollView className="flex-1 bg-gray-100 p-4">
-      <Text className="text-2xl font-bold mb-4">Create Match</Text>
-      
-      <TextInput
-        className="border border-gray-300 rounded-md p-2 mb-6"
-        placeholder="Match Name"
-        value={matchName}
-        onChangeText={setMatchName}
-      />
+    <SafeAreaView className={`flex-1 ${isDarkMode ? 'bg-black' : 'bg-gray-100'}`}>
+      <ScrollView className="flex-1 px-4">
+        <Text className={`text-2xl font-rubik-bold my-6 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+          Create Match
+        </Text>
+        
+        <TextInput
+          className={`border rounded-xl p-3 mb-6 font-rubik ${
+            isDarkMode 
+              ? 'bg-gray-900 border-gray-700 text-white' 
+              : 'bg-white border-gray-200 text-black'
+          }`}
+          placeholder="Match Name"
+          placeholderTextColor={isDarkMode ? '#9ca3af' : '#6b7280'}
+          value={matchName}
+          onChangeText={setMatchName}
+        />
 
-      {renderTeamSection('my', myTeam, (name) => setMyTeam({ ...myTeam, name }))}
-      {renderTeamSection('opponent', opponentTeam, (name) => setOpponentTeam({ ...opponentTeam, name }))}
+        {renderTeamSection('my', myTeam, (name) => setMyTeam({ ...myTeam, name }))}
+        {renderTeamSection('opponent', opponentTeam, (name) => setOpponentTeam({ ...opponentTeam, name }))}
 
-      <TouchableOpacity
-        className="bg-blue-500 p-4 rounded-md"
-        onPress={handleSubmit}
-      >
-        <Text className="text-white text-center font-bold">Save Match</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        <TouchableOpacity
+          className="bg-primary-800 p-4 rounded-xl mb-6"
+          onPress={handleSubmit}
+        >
+          <Text className="text-white bg-green-500 py-3 text-center font-rubik-bold">Save Match</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
   );
 }

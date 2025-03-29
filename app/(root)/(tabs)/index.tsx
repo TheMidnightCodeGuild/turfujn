@@ -7,7 +7,6 @@ import {
   View,
   Modal,
   Keyboard,
-  Switch,
   RefreshControl,
 } from "react-native";
 import { useEffect, useState, useCallback } from "react";
@@ -139,15 +138,24 @@ const Home = () => {
                   onPress={() => setShowLocationPicker(true)}
                   className="flex flex-row items-center ml-2"
                 >
-                  <Image source={icons.location} className="size-10 mr-1" />
+                  <Image source={icons.location} className="size-6 mr-1" />
                   <Text className={`text-base font-rubik-medium ${isDarkMode ? 'text-white' : 'text-black-300'}`}>
                     {selectedLocation ? selectedLocation.city : "Select Location"}
                   </Text>
                 </TouchableOpacity>
               </View>
               <View className="flex flex-row items-center gap-4">
-                <Switch value={isDarkMode} onValueChange={toggleTheme} />
-                <Image source={icons.bell} className="size-6" />
+                <TouchableOpacity 
+                  onPress={toggleTheme}
+                  className="flex items-center justify-center size-6 rounded-full bg-primary-100"
+                >
+                  <Image 
+                    source={isDarkMode ? icons.sun : icons.moon} 
+                    className="size-6"
+                  />
+                </TouchableOpacity>
+                <Image source={icons.bell} className="size-6"
+                  tintColor={isDarkMode ? "#fff" : "#191D31"} />
               </View>
             </View>
 
