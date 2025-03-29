@@ -393,7 +393,7 @@ export async function loginWithEmailPassword(email: string, password: string) {
     }
 
     // Attempt to login with email/password
-    const session = await account.createSession(email, password);
+    const session = await account.createEmailPasswordSession(email, password);
     
     if (!session) throw new Error("Session creation failed");
 
@@ -412,7 +412,7 @@ export async function loginWithEmailPassword(email: string, password: string) {
       await databases.createDocument(
         config.databaseId!,
         config.usersCollectionId!,
-        ID.unique(),
+        authenticatedUser.$id,
         {
           userId: authenticatedUser.$id,
           name: authenticatedUser.name,
