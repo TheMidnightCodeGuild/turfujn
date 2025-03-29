@@ -1,32 +1,3 @@
-// import { Alert, SafeAreaView, Text, TouchableOpacity } from "react-native";
-// import React from "react";
-// import { login } from "@/lib/appwrite";
-// import { useGlobalContext } from "@/lib/global-provider";
-// import { router } from "expo-router";
-
-// const signIn = () => {
-//   const { refetch } = useGlobalContext();
-//   const handleSignIn = async () => {
-//     const result = await login();
-//     if (result) {
-//       refetch();
-//       // router.replace("/");
-//     } else {
-//       Alert.alert("Error", "Failed to login");
-//     }
-//   };
-//   return (
-//     <SafeAreaView>
-//       <Text>Sign In into TurfUjn</Text>
-//       <TouchableOpacity onPress={handleSignIn}>
-//         <Text>Sign In</Text>
-//       </TouchableOpacity>
-//     </SafeAreaView>
-//   );
-// };
-
-// export default signIn;
-
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -65,6 +36,7 @@ const Auth = () => {
 
     if (result) {
       refetch();
+      return <Redirect href="/" />;
     } else {
       Alert.alert("Error", `Failed to ${isSignUp ? 'create account' : 'login'}`);
     }

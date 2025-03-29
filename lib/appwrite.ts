@@ -118,7 +118,7 @@ export async function login() {
         await databases.createDocument(
           config.databaseId,
           config.usersCollectionId,
-          ID.unique(),
+          authenticatedUser.$id,
           {
             userId: authenticatedUser.$id,
             name: authenticatedUser.name,
@@ -441,40 +441,78 @@ export async function loginWithEmailPassword(email: string, password: string) {
   }
 }
 
+// export async function createAccount(email: string, password: string, name: string){
+
+// }
 export async function createAccount(email: string, password: string, name: string) {
+
+  let session = null
+  if (!config.databaseId || !config.usersCollectionId) {
+    throw new Error("Missing required environment configuration");
+  }
   try {
-    // Create the account
+    console.log("Creating account for:", email);
+    
+    // Create the account with a unique ID
+    const userId = ID.unique();
+    console.log("Mera bada hai", userId);
     const user = await account.create(
-      ID.unique(),
+      userId,  // Use Appwrite's ID generator instead of email-based ID
       email,
       password,
       name
     );
+    console.log("Account created:", user);
 
     if (!user) throw new Error("Account creation failed");
 
-    // Automatically login after account creation
-    const session = await account.createSession(email, password);
-    
-    if (!session) throw new Error("Session creation failed");
+    console.log("Creating session for new account");
 
-    // Create user profile in database
+    // Automatically login after account creation
+  
+    try {
+      session = await account.createEmailPasswordSession(email, password);
+    } catch (e) {
+      console.error("Session creation failed:", e);
+      throw new Error("Failed to create user session");
+    }
+    // const session = await account.createSession(email, password);
+    // if (!session){ throw new Error("Session creation failed")}
+    // else {
+    //     console.log("Session created successfully:", session.$id);
+    // }
+
+
+
+    // const promise = account.createEmailPasswordSession(email, password);
+    // promise.then(function (response) {
+    // console.log(response); // Success
+    //   }, function (error) {
+    //   console.log(error); // Failure
+    // });
+
+    // const authenticatedUser = await account.get();
+    // console.log(user.$id);
+    
     await databases.createDocument(
-      config.databaseId!,
-      config.usersCollectionId!,
-      ID.unique(),
+      config.databaseId,
+      config.usersCollectionId,
+      user.$id,
       {
         userId: user.$id,
         name: name,
         email: email,
         avatar: avatar.getInitials(name).toString(),
-        bookings: []
+        bookings: [] // Initialize empty bookings array
       }
     );
+    console.log("User profile created successfully");
 
     return true;
   } catch (error) {
-    console.error("Account creation failed:", error);
+    console.error("Account creation failed for collections", error);
+    console.log("Error details:", error instanceof Error ? error.message : error);
+
     return false;
   }
 }
