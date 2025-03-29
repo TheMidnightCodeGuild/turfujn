@@ -83,7 +83,7 @@ const Auth = () => {
       >
         <Image
           source={images.onboarding}
-          className="w-full h-[500px] "
+          className="w-full h-[400px] "
           resizeMode="contain"
         />
 
