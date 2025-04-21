@@ -112,7 +112,7 @@ const Profile = () => {
         </View>
 
         <View className="flex flex-col mt-10">
-          <SettingsItem icon={icons.calendar} title="My Bookings" onPress={() => router.push('/Bookings')} />
+          <SettingsItem icon={icons.calendar} title="My Bookings" onPress={() => router.push('/bookings')} />
           <SettingsItem icon={icons.wallet} title="Payments" onPress={() => router.push('/Payments')} />
           <SettingsItem icon={icons.person} title="Create Teams" onPress={() => router.push('/create-team')}/>
           <SettingsItem icon={icons.person} title="View Teams" onPress={() => router.push('/view-teams')}/>
@@ -123,8 +123,8 @@ const Profile = () => {
             <SettingsItem key={index} {...item} />
           ))}  */}
              <SettingsItem icon={icons.person} title="Profile" onPress={() => router.push('/UpdateProfile')}/>
-             <SettingsItem icon={icons.bell} title="Notifications"/>
-             <SettingsItem icon={icons.people} title="Invite friends"/>
+             <SettingsItem icon={icons.bell} title="Notifications" onPress={() => router.push('/Notifications')}/>
+             <SettingsItem icon={icons.people} title="Invite friends" onPress={() => router.push('/invite-friends')}  />
              
         </View>
 
