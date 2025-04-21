@@ -17,7 +17,6 @@ import icons from '@/constants/icon';
 interface User {
   name?: string;
   username?: string;
-  bio?: string;
   dob?: string;
   email?: string;
   phone?: string;
@@ -37,7 +36,6 @@ const UpdateProfile = () => {
   const { user, refetch, isDarkMode } = useGlobalContext();
   const [name, setName] = useState((user as User)?.name || '');
   const [username, setUsername] = useState((user as User)?.username || '');
-  const [bio, setBio] = useState((user as User)?.bio || '');
   const [dob, setDob] = useState((user as User)?.dob || '');
   const [email, setEmail] = useState((user as User)?.email || '');
   const [phone, setPhone] = useState((user as User)?.phone || '');
@@ -53,7 +51,7 @@ const UpdateProfile = () => {
 
     setLoading(true);
     try {
-      // await updateUser({ name, username, bio, dob, email, phone, preferredSport: selectedSports });
+      // await updateUser({ name, username, dob, email, phone, preferredSport: selectedSports });
       await refetch();
       Alert.alert('Success', 'Profile updated successfully');
       router.back();
@@ -127,20 +125,6 @@ const UpdateProfile = () => {
               placeholder="Enter your username"
               placeholderTextColor={isDarkMode ? '#666' : undefined}
               className={`border border-primary-200 rounded-xl p-4 text-base font-rubik ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-50 text-black'}`}
-            />
-          </View>
-
-          <View>
-            <Text className={`text-base font-rubik-medium ${isDarkMode ? 'text-white' : 'text-black-300'} mb-2`}>
-              Bio
-            </Text>
-            <TextInput
-              value={bio}
-              onChangeText={setBio}
-              placeholder="Write something about yourself"
-              placeholderTextColor={isDarkMode ? '#666' : undefined}
-              multiline
-              className={`border border-primary-200 rounded-xl p-4 text-base font-rubik h-20 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-50 text-black'}`}
             />
           </View>
 
